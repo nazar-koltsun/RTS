@@ -65,6 +65,21 @@
   font-family: var(--font-geist-sans);
 }
 
-.loginButton:hover {
+.loginButton:hover:not(:disabled) {
   background-color: #0051cc;
+}
+
+.loginButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.errorMessage {
+  padding: 0.75rem;
+  background-color: #fee;
+  color: #c33;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
 }
