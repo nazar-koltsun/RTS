@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 
 import styles from './page.module.css';
@@ -64,7 +65,8 @@ export default function Login() {
   return (
     <div className={styles.loginContainer}>
       <div className={styles.loginBox}>
-        <h1>Login</h1>
+        <Image src="/images/logo.png" className={styles.logo} alt="Logo" width={138} height={52} />
+        <h1 className={styles.mainTitle}>Welcome</h1>
         <form onSubmit={handleSubmit} className={styles.loginForm}>
           <div className={styles.formGroup}>
             <label htmlFor="email">Email</label>
