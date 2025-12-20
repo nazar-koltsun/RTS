@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
+import FormInput from '@/app/components/FormInput';
 
 import styles from './page.module.css';
 
@@ -67,27 +68,27 @@ export default function Login() {
       <div className={styles.loginBox}>
         <Image src="/images/logo.png" className={styles.logo} alt="Logo" width={138} height={52} />
         <h1 className={styles.mainTitle}>Welcome</h1>
+        <p className={styles.formDescription}>
+          Enter your email to log in to RTS Pro web.
+        </p>
+        
         <form onSubmit={handleSubmit} className={styles.loginForm}>
-          <div className={styles.formGroup}>
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+          <FormInput 
+            type='email'
+            id='email'
+            label="Email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <FormInput 
+            type='password'
+            id='password'
+            label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
           {error && <div className={styles.errorMessage}>{error}</div>}
           <button
             type="submit"

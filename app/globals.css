@@ -1,6 +1,7 @@
 :root {
   --background: #f3f6f7;
   --font-default-color: #1e212a;
+  --font-light-color: #65676e;
   --font-family-default: -apple-system, system-ui, sans-serif;
 }
 
@@ -13,7 +14,7 @@ body {
 body {
   font-family: var(--font-family-default);
   letter-spacing: 0.3px;
-  background-color: var(--background);  
+  background-color: var(--background);
 }
 
 * {
@@ -30,4 +31,14 @@ a {
 img {
   max-width: 100%;
   height: auto;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+  -webkit-text-fill-color: #000 !important;
+  transition: background-color 9999s ease-out 0s;
 }
