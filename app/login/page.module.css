@@ -12,10 +12,11 @@
   flex-direction: column;
   justify-content: center;
   background: white;
-  padding: 80px 40px;
+  padding: 40px;
   border-radius: 5px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
   width: 100%;
+  min-height: 540px;
   max-width: 400px;
 }
 
@@ -39,22 +40,25 @@
 .loginForm {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   margin-top: 24px;
 }
 
 .loginButton {
-  padding: 0.75rem;
-  background-color: #0070f3;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  margin-top: 0.5rem;
+  margin-top: 24px;
 }
 
-.loginButton:hover {
-  background-color: #0051cc;
+.passwordInput {
+  margin-top: 12px;
 }
+
+.helpText {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.errorMessage {
+  font-size: 14px;
+  margin-top: 4px;
+  color: #d03c38;
+}
+

@@ -5,9 +5,24 @@
   &:has(.input:not(:placeholder-shown)) {
     .label {
       top: -2px;
-      transform: scale(0.88) translateX(calc(-1*14px)) translateY(-58%)
-      ;
+      transform: scale(0.88) translateX(calc(-1 * 14px)) translateY(-58%);
       color: #0091ea;
+    }
+  }
+
+  &:has(.input:not(:focus):not(:placeholder-shown)) {
+    .label {
+      color: var(--font-light-color);
+    }
+  }
+
+  &:has(.input:invalid:not(:placeholder-shown)) .label {
+    color: #d03c38;
+  }
+
+  &:has(.input:not(:placeholder-shown):disabled) {
+    .label {
+      display: none;
     }
   }
 }
@@ -22,7 +37,8 @@
   font-weight: 400;
   color: var(--font-light-color);
   background-color: #fff;
-  transition: transform .15s ease-in-out,top .15s ease-in-out, padding .15s ease-in-out;
+  transition: transform 0.15s ease-in-out, top 0.15s ease-in-out,
+    padding 0.15s ease-in-out;
 }
 
 .input {
@@ -36,10 +52,72 @@
   border: 1px solid #c9cace;
   outline: none;
   transition: all 0.15s ease-in-out;
- 
+
   &:focus {
     border-color: #0091ea;
     box-shadow: 0 0 0 1px #0091ea;
     background-color: transparent;
+  }
+
+  &:invalid:not(:placeholder-shown) {
+    border-color: #d03c38;
+    box-shadow: 0 0 0 1px #d03c38;
+  }
+}
+
+.inputWithEditBtn {
+  padding-right: 80px;
+}
+
+.inputWithPasswordToggle {
+  padding-right: 50px;
+
+  &.inputWithEditBtn {
+    padding-right: 120px;
+  }
+}
+
+.passwordToggleBtn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  width: 44px;
+  height: 100%;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease-in-out;
+  z-index: 1;
+
+  &:hover {
+    color: #0091ea;
+  }
+}
+
+.editBtn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #0091ea;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.15s ease-in-out;
+  font-family: var(--font-family-default);
+  z-index: 1;
+
+  .inputWrapper:has(.passwordToggleBtn) & {
+    right: 50px;
   }
 }
