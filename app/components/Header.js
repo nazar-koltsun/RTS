@@ -15,8 +15,8 @@ const Header = () => {
   const navItems = [
     { label: 'Overview', href: '/factoring' },
     { label: 'Invoices', href: '/' },
-    { label: 'Reports', href: '' },
-    { label: 'FAQ', href: '' },
+    { label: 'Reports', href: '/' },
+    { label: 'FAQ', href: '/' },
   ];
 
   const userMenuItems = [
