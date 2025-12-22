@@ -1,9 +1,12 @@
 .header {
   font-family: var(--font-family-proxima-nova);
-  color:black;
+  color: black;
   font-size: 14px;
-  padding: 12px 32px 7px;
   background-color: #f0f0f0;
+}
+
+.headerTop {
+  padding: 12px 32px 7px;
 }
 
 .headerOrg {
@@ -13,6 +16,90 @@
   gap: 8px;
 }
 
-.headerOrgName {
+.headerBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 19px 32px 0 24px;
+  background-color: white;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
 
+.nav {
+  display: flex;
+  align-items: center;
+}
+
+.navLink {
+  color: #0066cc;
+  color: #0091ea;
+  text-decoration: none;
+  padding: 6px 13px 15px;
+  font-weight: 400;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.navLink:hover {
+  opacity: 0.6;
+}
+
+.navLinkActive {
+  color: black;
+  border-bottom: 2px solid #0091ea;
+}
+
+.userInfoWrapper {
+  position: relative;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding-bottom: 19px;
+  cursor: pointer;
+}
+
+.userName {
+  color: black;
+  font-weight: 400;
+}
+
+.caretIcon {
+  transition: transform 0.2s;
+}
+
+.caretIconRotated {
+  transform: rotate(180deg);
+}
+
+.dropdown {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  margin-top: 4px;
+  padding: 8px 0;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .2);
+  min-width: 200px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.dropdownItem {
+  display: block;
+  padding: 8px 16px;
+  color: black;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  transition: background-color 0.2s;
+}
+
+.dropdownItem:hover {
+  background-color: #0000000a;
 }
