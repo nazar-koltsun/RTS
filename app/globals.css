@@ -3,6 +3,31 @@
   --font-default-color: #1e212a;
   --font-light-color: #65676e;
   --font-family-default: -apple-system, system-ui, sans-serif;
+  --font-family-proxima-nova: 'Proxima Nova', sans-serif;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('/fonts/ProximaNova-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('/fonts/ProximaNova-Semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('/fonts/ProximaNova-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
 }
 
 html,
@@ -40,4 +65,31 @@ textarea:-webkit-autofill,
 select:-webkit-autofill {
   -webkit-text-fill-color: #000 !important;
   transition: background-color 9999s ease-out 0s;
+}
+
+.page-layout {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    'sidebar header'
+    'sidebar main'
+    'sidebar footer';
+  height: 100vh;
+}
+
+.page-layout header {
+  grid-area: header;
+}
+
+.page-layout aside {
+  grid-area: sidebar;
+}
+
+.page-layout footer {
+  grid-area: footer;
+}
+
+.page-layout main {
+  grid-area: main;
 }

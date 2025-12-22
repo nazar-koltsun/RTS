@@ -1,0 +1,109 @@
+.navbar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 11px 28px;
+  background-color: #0190ea;
+  font-family: var(--font-family-proxima-nova);
+  font-weight: 400;
+}
+
+.logo {
+  padding-left: 11px;
+}
+
+.nav {
+  margin-top: 60px;
+}
+
+.navList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navItem {
+  margin-bottom: 6px;
+}
+
+.navItemActive {
+  opacity: 1;
+  font-weight: 600;
+}
+
+.icon {
+  font-size: 14px;
+}
+
+.navItemLink {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px;
+  border-radius: 64px;
+  background: transparent;
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #0281e1;
+  }
+}
+
+.navItemActive .navItemLink {
+  background: #004578;
+}
+
+.navItemLabel {
+  font-size: 14px;
+  color: #ffffff;
+  font-weight: 400;
+}
+
+.navItemLabelWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navItemAddLabel {
+  align-self: flex-end;
+}
+
+.feedbackBtn {
+  margin-top: auto;
+  display: flex;
+  height: 38px;
+  width: 135px;
+  gap: 11px;
+  cursor: pointer;
+  transition: all 0.4s allow-discrete;
+  align-items: center;
+  background: #004577;
+  border: 0;
+  border-radius: 64px;
+  padding: 0 20px;
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+
+  img {
+    width: 20px;
+    height: 20px;
+    fill: #ffffff;
+  }
+
+  &:hover {
+    background-color: #0182d2;
+  }
+}
+
+.toggleNavBtn {
+  position: absolute;
+  top: 80px;
+  right: -15px;
+  display: flex;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: all 0.4s allow-discrete;
+}

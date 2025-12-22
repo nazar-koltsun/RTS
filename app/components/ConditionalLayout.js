@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Navbar from './Navbar';
 
 export default function ConditionalLayout({ children }) {
   const router = useRouter();
@@ -59,8 +60,10 @@ export default function ConditionalLayout({ children }) {
           </button>
         </header>
       )}
-      {!isLoginPage && <aside>Navbar</aside>}
-      {children}
+      {!isLoginPage && <Navbar />}
+      <main>
+        {children}
+      </main>
       {!isLoginPage && <footer>Footer</footer>}
     </>
   );
