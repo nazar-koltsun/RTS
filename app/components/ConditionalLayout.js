@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Navbar from './Navbar';
+import Header from './Header';
 
 export default function ConditionalLayout({ children }) {
   const router = useRouter();
@@ -40,26 +41,7 @@ export default function ConditionalLayout({ children }) {
 
   return (
     <>
-      {!isLoginPage && (
-        <header>
-          Header{' '}
-          <button
-            onClick={async () => {
-              // Remove authentication state from localStorage
-              localStorage.removeItem('isAuthenticated');
-              localStorage.removeItem('userEmail');
-              localStorage.removeItem('supabaseSession');
-              // Log out from Supabase
-              const { supabase } = await import('@/lib/supabase');
-              await supabase.auth.signOut();
-              // Optionally reload or redirect to login page
-              window.location.href = '/login';
-            }}
-          >
-            Log out
-          </button>
-        </header>
-      )}
+      {!isLoginPage && <Header />}
       {!isLoginPage && <Navbar />}
       <main>
         {children}
