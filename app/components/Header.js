@@ -14,17 +14,17 @@ const Header = () => {
 
   const navItems = [
     { label: 'Overview', href: '/factoring' },
-    { label: 'Invoices', href: '/invoices' },
-    { label: 'Reports', href: '/reports' },
-    { label: 'FAQ', href: '/faq' },
+    { label: 'Invoices', href: '/' },
+    { label: 'Reports', href: '' },
+    { label: 'FAQ', href: '' },
   ];
 
   const userMenuItems = [
-    { label: 'Administration', href: '/administration' },
-    { label: 'Contact Us', href: '/contact' },
-    { label: 'Settings', href: '/settings' },
-    { label: 'Help Center', href: '/help' },
-    { label: 'ProTransport EULA', href: '/eula' },
+    { label: 'Administration', href: '/' },
+    { label: 'Contact Us', href: '/' },
+    { label: 'Settings', href: '/' },
+    { label: 'Help Center', href: '/' },
+    { label: 'ProTransport EULA', href: '/' },
     { label: 'Log Out', href: '/login', action: 'logout' },
   ];
 
