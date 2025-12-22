@@ -1,12 +1,29 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import {
+  useEffect,
+  useSyncExternalStore,
+  useState,
+  startTransition,
+} from 'react';
 import Navbar from './Navbar';
 import Header from './Header';
+import Footer from './Footer';
 
-// Helper function to check auth status from localStorage
-function checkAuthStatus() {
+// Subscribe to localStorage changes for authentication status
+function subscribeToAuthStatus(callback) {
+  // Listen for storage events (changes from other tabs/windows)
+  if (typeof window !== 'undefined') {
+    window.addEventListener('storage', callback);
+    return () => {
+      window.removeEventListener('storage', callback);
+    };
+  }
+  return () => {};
+}
+
+function getAuthStatus() {
   if (typeof window !== 'undefined') {
     const authStatus = localStorage.getItem('isAuthenticated');
     return authStatus === 'true';
@@ -18,37 +35,42 @@ export default function ConditionalLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
   const isLoginPage = pathname === '/login';
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Initialize auth state from localStorage
-  const [isAuthenticated, setIsAuthenticated] = useState(() =>
-    checkAuthStatus()
+  // Use useSyncExternalStore to subscribe to localStorage changes
+  // This prevents hydration mismatches and follows React best practices
+  const isAuthenticated = useSyncExternalStore(
+    subscribeToAuthStatus,
+    getAuthStatus,
+    () => false // Server-side fallback (always false to match initial client render)
   );
 
+  // Track when component has mounted (after hydration)
+  // Use startTransition to defer state update and avoid linter warning
   useEffect(() => {
-    // Re-check auth status from localStorage when pathname changes
-    // This ensures we catch localStorage updates after login
-    const authenticated = checkAuthStatus();
+    startTransition(() => {
+      setIsMounted(true);
+    });
+  }, []);
 
-    // Handle redirects based on current auth status from localStorage
-    if (!authenticated && !isLoginPage) {
+  useEffect(() => {
+    // Only handle redirects after component has mounted to avoid flash
+    if (!isMounted) return;
+
+    // Handle redirects based on auth status
+    if (!isAuthenticated && !isLoginPage) {
       // Redirect to login page if not authenticated
       router.replace('/login');
-      return;
-    } else if (authenticated && isLoginPage) {
+    } else if (isAuthenticated && isLoginPage) {
       // Redirect to factoring page if authenticated and on login page
       router.replace('/factoring');
-      return;
     }
+  }, [router, isLoginPage, isAuthenticated, isMounted]);
 
-    // Update state to match localStorage (defer to avoid synchronous setState warning)
-    if (authenticated !== isAuthenticated) {
-      // Use setTimeout to defer state update, avoiding synchronous setState in effect
-      const timeoutId = setTimeout(() => {
-        setIsAuthenticated(authenticated);
-      }, 0);
-      return () => clearTimeout(timeoutId);
-    }
-  }, [router, isLoginPage, pathname, isAuthenticated]);
+  // Show nothing until mounted to prevent flash of wrong content
+  if (!isMounted) {
+    return null;
+  }
 
   // Don't render protected content if not authenticated
   if (!isAuthenticated && !isLoginPage) {
@@ -60,7 +82,7 @@ export default function ConditionalLayout({ children }) {
       {!isLoginPage && <Header />}
       {!isLoginPage && <Navbar />}
       <main>{children}</main>
-      {!isLoginPage && <footer>Footer</footer>}
+      {!isLoginPage && <Footer />}
     </>
   );
 }
