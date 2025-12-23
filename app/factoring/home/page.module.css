@@ -348,12 +348,12 @@
 /* Account Cards */
 .accountCardContainer {
   display: flex;
-  gap: 24px;
+  gap: 20px;
   justify-content: space-between;
 }
 
 .accountCard {
-  width: 48%;
+  width: 50%;
   margin-bottom: 28px;
 }
 
