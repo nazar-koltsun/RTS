@@ -13,7 +13,7 @@ const Header = () => {
   const dropdownRef = useRef(null);
 
   const navItems = [
-    { label: 'Overview', href: '/factoring' },
+    { label: 'Overview', href: '/factoring/home' },
     { label: 'Invoices', href: '/' },
     { label: 'Reports', href: '/' },
     { label: 'FAQ', href: '/' },

@@ -63,7 +63,7 @@ export default function ConditionalLayout({ children }) {
       router.replace('/login');
     } else if (isAuthenticated && isLoginPage) {
       // Redirect to factoring page if authenticated and on login page
-      router.replace('/factoring');
+      router.replace('/factoring/home');
     }
   }, [router, isLoginPage, isAuthenticated, isMounted]);
 

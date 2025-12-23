@@ -77,7 +77,7 @@ export default function Login() {
       }
 
       // Redirect to factoring page
-      router.push('/factoring');
+      router.push('/factoring/home');
     } catch (err) {
       setError(err.message || 'Login failed. Please check your credentials.');
       console.error('Login error:', err);
