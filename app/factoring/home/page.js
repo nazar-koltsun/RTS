@@ -174,13 +174,19 @@ export default function Factoring() {
               <p className={styles.submittedDate}>
                 Submitted on {currentPurchase.submittedDate}
               </p>
-              <Image
-                className={styles.progressBar}
-                src="/images/progressbar.png"
-                alt="Progress Bar"
-                width={670}
-                height={16}
-              />
+              <picture>
+                <source
+                  media="(min-width: 2000px)"
+                  srcSet="/images/progressbar-big.png"
+                />
+                <img
+                  className={styles.progressBar}
+                  src="/images/progressbar.png"
+                  alt="Progress Bar"
+                  width={670}
+                  height={16}
+                />
+              </picture>
               <div className={styles.processedMessage}>
                 <div className={styles.processedHeading}>Processed</div>
                 <div className={styles.processedText}>
@@ -322,7 +328,7 @@ export default function Factoring() {
                 <span className={styles.repName}>{accountRep.name}</span>
               </div>
               <div className={styles.accountRepInfo}>
-              <svg
+                <svg
                   fill="#666666"
                   width={24}
                   height={24}

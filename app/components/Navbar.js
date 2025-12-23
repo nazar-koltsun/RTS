@@ -34,7 +34,7 @@ const Navbar = () => {
     { label: 'Credit Search', icon: '/credit-search.svg', href: '/' },
     { label: 'Freight', icon: '/freight.svg', href: '/' },
     { label: 'Fuel', icon: '/fuel.svg', href: '/' },
-    { label: 'Factoring', icon: '/factoring.svg', href: '/factoring' },
+    { label: 'Factoring', icon: '/factoring.svg', href: '/factoring/home' },
     {
       label: 'ProTransport',
       addLabel: 'BASIC',

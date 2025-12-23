@@ -109,7 +109,7 @@
 }
 
 .statusValueSmall {
-  line-height: 46px;
+  line-height: 40px;
 }
 
 .statusLabel {
@@ -161,6 +161,7 @@
 }
 
 .progressBar {
+  width: 100%;
   margin-top: 20px;
 }
 
@@ -281,7 +282,11 @@
   gap: 24px;
   align-items: flex-start;
   padding: 12px;
-  padding-right: 55px;
+  padding-right: 8%;
+
+  @media (min-width: 2000px) {
+    padding-right: 15%;
+  }
 }
 
 .debtorsList {
