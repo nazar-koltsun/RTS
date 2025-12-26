@@ -160,7 +160,7 @@ export default function Factoring() {
               linkText="View all"
               showInfoIcon
             />
-            <div className={styles.statusGrid}>
+            <div className={cn(styles.statusGrid, styles.statusGridUnfunded)}>
               <StatusItem label="Held" value={unfundedInvoices.held} />
               <StatusItem label="Pending" value={unfundedInvoices.pending} />
               <StatusItem label="Denied" value={unfundedInvoices.denied} />

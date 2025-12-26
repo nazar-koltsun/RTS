@@ -1,0 +1,306 @@
+.container {
+  padding: 15px 64px 80px;
+  background-color: #f5f5f5;
+  font-family: var(--font-family-proxima-nova);
+  color: var(--font-default-color);
+  min-height: calc(100vh - 200px);
+}
+
+.instructionBanner {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #333333;
+  padding: 0;
+}
+
+/* Actions Section */
+.actionsSection {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 10px;
+  padding: 0 10px;
+  align-items: flex-start;
+}
+
+.createInvoiceButton {
+  flex-grow: 2;
+  min-width: max-content;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: transparent;
+  color: #0091ea;
+  border: 2px solid #0091ea;
+  border-radius: 25px;
+  font-size: 13.5px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  font-family: var(--font-family-proxima-nova);
+  white-space: nowrap;
+}
+
+.createInvoiceButton:hover {
+  background-color: #eaf7ff;
+}
+
+.createInvoiceIcon {
+  margin-top: -2px;
+}
+
+.uploadBundleIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.uploadBundleArea {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: .4rem;
+  letter-spacing: -0.1px;
+  width: 100%;
+  border: 3px dashed #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+}
+
+.uploadBundleArea:hover {
+  border-color: #0091ea;
+  background-color: #f5f9ff;
+}
+
+.uploadBundleAreaDragging {
+  background-color: #0083ca1a;
+  border: 3px dashed #0083ca;
+}
+
+.uploadArrowIcon {
+  flex-shrink: 0;
+}
+
+.uploadBundleText {
+  font-size: 16px;
+  color: #0083ca;
+  font-weight: 400;
+}
+
+.fileInput {
+  display: none;
+}
+
+/* Table Container */
+.tableContainer {
+  padding: 14px 12px;
+}
+
+.tableHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0.5;
+}
+
+.tableHeaderCell {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #666666;
+  text-transform: uppercase;
+}
+
+.tableHeaderCell svg {
+  flex-shrink: 0;
+}
+
+.infoIcon {
+  margin-left: 4px;
+}
+
+/* Empty State */
+.emptyState {
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.emptyStateText,
+.emptyStateSubtext {
+  font-size: 36px;
+  color: #666666;
+  color: #999;
+  margin: 40px;
+  font-weight: 400;
+}
+
+/* Invoice Row */
+.invoiceRow {
+  position: relative;
+  border-bottom: 1px solid #eeeeee;
+  background-color: #ffffff;
+}
+
+.invoiceRow:last-child {
+  border-bottom: none;
+}
+
+.invoiceRowLeftBorder {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: #d03c38;
+}
+
+.invoiceRowContent {
+  display: grid;
+  grid-template-columns: auto 1.5fr 2fr 1.5fr 1fr 1.5fr;
+  gap: 16px;
+  padding: 20px;
+  align-items: center;
+  padding-left: 24px;
+}
+
+.deleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 3px;
+  transition: background-color 0.2s ease-in-out;
+  flex-shrink: 0;
+}
+
+.deleteButton:hover {
+  background-color: #f5f5f5;
+}
+
+.deleteButton svg {
+  color: #666666;
+}
+
+.deleteButton:hover svg {
+  color: #d03c38;
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: 400;
+  font-family: var(--font-family-proxima-nova);
+  border-radius: 5px;
+  border: 1px solid #c9cace;
+  outline: none;
+  transition: all 0.15s ease-in-out;
+  color: #333333;
+  background-color: #ffffff;
+}
+
+.input::placeholder {
+  color: #999999;
+}
+
+.input:focus {
+  border-color: #0091ea;
+  box-shadow: 0 0 0 1px #0091ea;
+}
+
+/* Documents Column */
+.documentsColumn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.documentIconWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.documentIcon {
+  color: #666666;
+}
+
+.documentBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: #0091ea;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 5px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.chevronIcon {
+  color: #666666;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.chevronIcon:hover {
+  color: #0091ea;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .container {
+    padding: 15px 40px 80px;
+  }
+
+  .tableHeader,
+  .invoiceRowContent {
+    grid-template-columns: auto 1.2fr 1.8fr 1.2fr 1fr 1.2fr;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 15px 20px 80px;
+  }
+
+  .actionsSection {
+    flex-direction: column;
+  }
+
+  .uploadBundleArea {
+    width: 100%;
+  }
+
+  .tableHeader,
+  .invoiceRowContent {
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+  }
+
+  .tableHeaderCell {
+    display: none;
+  }
+
+  .tableHeaderCell:first-child,
+  .invoiceRowContent > *:first-child {
+    display: flex;
+  }
+}

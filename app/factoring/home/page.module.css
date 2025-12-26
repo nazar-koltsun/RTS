@@ -73,9 +73,12 @@
 
 /* Status Grid - Horizontal layout with large numbers */
 .statusGrid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   min-height: 120px;
+}
+
+.statusGridUnfunded {
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .statusItem {
@@ -135,7 +138,8 @@
 }
 
 .statusList {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   min-height: 120px;
 
   & .statusItem {
