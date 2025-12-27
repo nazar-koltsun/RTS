@@ -5,13 +5,16 @@ import { cn } from '@/lib/utils';
 import styles from './page.module.css';
 import Image from 'next/image';
 import FormInput from '@/app/components/FormInput';
+import FilesPreviewBlock from './components/FilesPreviewBlock';
 
 const Invoices = () => {
   const [invoices, setInvoices] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isHeaderActive, setIsHeaderActive] = useState(false);
+  const [openPreviewId, setOpenPreviewId] = useState(null);
   const bundleInputRef = useRef(null);
   const documentInputRefs = useRef({});
+  const previewFileInputRefs = useRef({});
 
   const handleCreateInvoice = () => {
     const newInvoice = {
@@ -21,6 +24,7 @@ const Invoices = () => {
       poNumber: '',
       amount: '',
       documents: [],
+      notes: '',
     };
     setInvoices([...invoices, newInvoice]);
     setIsHeaderActive(true);
@@ -80,19 +84,23 @@ const Invoices = () => {
       return;
     }
 
+    // Create documents with blob URLs for preview
+    const newDocuments = pdfFiles.map((file, index) => {
+      const blobUrl = URL.createObjectURL(file);
+      return {
+        id: Date.now() + index,
+        name: file.name,
+        file: file,
+        blobUrl: blobUrl,
+      };
+    });
+
     setInvoices(
       invoices.map((invoice) =>
         invoice.id === invoiceId
           ? {
               ...invoice,
-              documents: [
-                ...invoice.documents,
-                ...pdfFiles.map((file, index) => ({
-                  id: Date.now() + index,
-                  name: file.name,
-                  file: file,
-                })),
-              ],
+              documents: [...invoice.documents, ...newDocuments],
             }
           : invoice
       )
@@ -113,6 +121,44 @@ const Invoices = () => {
     }
     // Reset input value to allow selecting the same file again
     e.target.value = '';
+  };
+
+  const handleTogglePreview = (invoiceId) => {
+    setOpenPreviewId(openPreviewId === invoiceId ? null : invoiceId);
+  };
+
+  const handlePreviewFileSelect = (invoiceId, e) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handleDocumentUpload(invoiceId, files);
+    }
+    e.target.value = '';
+  };
+
+  const handleNotesChange = (invoiceId, value) => {
+    handleInvoiceChange(invoiceId, 'notes', value);
+  };
+
+  const handleDeleteDocument = (invoiceId, documentId) => {
+    // Clean up blob URL before deleting
+    const invoice = invoices.find((inv) => inv.id === invoiceId);
+    const document = invoice?.documents.find((doc) => doc.id === documentId);
+    if (document?.blobUrl) {
+      URL.revokeObjectURL(document.blobUrl);
+    }
+
+    setInvoices(
+      invoices.map((invoice) =>
+        invoice.id === invoiceId
+          ? {
+              ...invoice,
+              documents: invoice.documents.filter(
+                (doc) => doc.id !== documentId
+              ),
+            }
+          : invoice
+      )
+    );
   };
 
   return (
@@ -214,7 +260,13 @@ const Invoices = () => {
         {invoices.map((invoice) => (
           <div key={invoice.id} className={styles.invoiceRow}>
             <div className={styles.invoiceRowLeftBorder}></div>
-            <div className={styles.invoiceRowContent}>
+            <div
+              className={cn(
+                styles.invoiceRowContent,
+                openPreviewId === invoice.id &&
+                  styles.invoiceRowContentWithPreview
+              )}
+            >
               {/* Delete Button */}
               <button
                 className={styles.deleteButton}
@@ -329,7 +381,13 @@ const Invoices = () => {
                     className={styles.fileInput}
                   />
                 </div>
-                <button className={styles.showFilesBtn}>
+                <button
+                  className={cn(
+                    styles.showFilesBtn,
+                    openPreviewId === invoice.id && styles.showFilesBtnActive
+                  )}
+                  onClick={() => handleTogglePreview(invoice.id)}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 10.79 7.2"
@@ -338,12 +396,39 @@ const Invoices = () => {
                   >
                     <g id="arrow-left">
                       <path
-                        d="M10.79,1.12a.47.47,0,0,0-.16-.31L9.8.11A.44.44,0,0,0,9.47,0a.49.49,0,0,0-.32.16L5.48,4.41a.12.12,0,0,1-.08,0,.13.13,0,0,1-.09,0L1.64.16A.47.47,0,0,0,1,.11L.16.81A.47.47,0,0,0,0,1.12a.42.42,0,0,0,.11.32L5.05,7.05a.45.45,0,0,0,.34.15.45.45,0,0,0,.35-.15l4.94-5.61A.41.41,0,0,0,10.79,1.12Z" fill="#666666"
+                        d="M10.79,1.12a.47.47,0,0,0-.16-.31L9.8.11A.44.44,0,0,0,9.47,0a.49.49,0,0,0-.32.16L5.48,4.41a.12.12,0,0,1-.08,0,.13.13,0,0,1-.09,0L1.64.16A.47.47,0,0,0,1,.11L.16.81A.47.47,0,0,0,0,1.12a.42.42,0,0,0,.11.32L5.05,7.05a.45.45,0,0,0,.34.15.45.45,0,0,0,.35-.15l4.94-5.61A.41.41,0,0,0,10.79,1.12Z"
+                        fill="#666666"
                       />
                     </g>
                   </svg>
                 </button>
               </div>
+
+              {/* Files Preview Block */}
+              {openPreviewId === invoice.id && (
+                <>
+                  <input
+                    ref={(el) =>
+                      (previewFileInputRefs.current[invoice.id] = el)
+                    }
+                    type="file"
+                    accept="application/pdf"
+                    multiple
+                    onChange={(e) => handlePreviewFileSelect(invoice.id, e)}
+                    className={styles.fileInput}
+                  />
+                  <FilesPreviewBlock
+                    invoiceId={invoice.id}
+                    documents={invoice.documents}
+                    notes={invoice.notes}
+                    onDeleteDocument={handleDeleteDocument}
+                    onNotesChange={handleNotesChange}
+                    fileInputClick={() =>
+                      previewFileInputRefs.current[invoice.id]?.click()
+                    }
+                  />
+                </>
+              )}
             </div>
           </div>
         ))}

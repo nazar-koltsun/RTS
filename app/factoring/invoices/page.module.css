@@ -177,6 +177,10 @@
   align-items: center;
 }
 
+.invoiceRowContentWithPreview {
+  padding-bottom: 0;
+}
+
 .deleteButton {
   display: flex;
   align-items: center;
@@ -316,8 +320,19 @@
   border: none;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     background-color: #cecdcd;
   }
+
+  svg {
+    transition: transform 0.3s ease-out;
+  }
+}
+
+.showFilesBtnActive svg {
+  transform: rotate(180deg);
 }
