@@ -58,7 +58,7 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
-  padding: .4rem;
+  padding: 0.4rem;
   letter-spacing: -0.1px;
   width: 100%;
   border: 3px dashed #ccc;
@@ -104,6 +104,13 @@
   justify-content: space-between;
   align-items: center;
   opacity: 0.5;
+  margin-bottom: 14px;
+}
+
+.tableHeaderActive {
+  display: grid;
+  grid-template-columns: 90px repeat(4, 1fr) 120px;
+  opacity: 1;
 }
 
 .tableHeaderCell {
@@ -143,6 +150,10 @@
   position: relative;
   border-bottom: 1px solid #eeeeee;
   background-color: #ffffff;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 2px 0px,
+    rgba(0, 0, 0, 0.24) 0px 2px 2px 0px;
 }
 
 .invoiceRow:last-child {
@@ -154,17 +165,16 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 4px;
-  background-color: #d03c38;
+  width: 6px;
+  background-color: #ef3824;
 }
 
 .invoiceRowContent {
   display: grid;
-  grid-template-columns: auto 1.5fr 2fr 1.5fr 1fr 1.5fr;
-  gap: 16px;
-  padding: 20px;
+  grid-template-columns: 40px repeat(4, 1fr) 100px;
+  gap: 20px;
+  padding: 15px 12px 10px 20px;
   align-items: center;
-  padding-left: 24px;
 }
 
 .deleteButton {
@@ -178,53 +188,49 @@
   border-radius: 3px;
   transition: background-color 0.2s ease-in-out;
   flex-shrink: 0;
+  border-radius: 50%;
 }
 
 .deleteButton:hover {
-  background-color: #f5f5f5;
-}
-
-.deleteButton svg {
-  color: #666666;
-}
-
-.deleteButton:hover svg {
-  color: #d03c38;
+  background-color: #bfbfbf;
 }
 
 .inputWrapper {
   position: relative;
+
+  &:focus-within,
+  &:has(input:not(:placeholder-shown)) {
+    label {
+      left: 0;
+      transform: scale(0.7) translateY(-1%) !important;
+      transform-origin: left top;
+    }
+  }
 }
 
-.input {
-  width: 100%;
-  height: 40px;
-  padding: 0 12px;
-  font-size: 14px;
-  font-weight: 400;
-  font-family: var(--font-family-proxima-nova);
-  border-radius: 5px;
-  border: 1px solid #c9cace;
-  outline: none;
-  transition: all 0.15s ease-in-out;
-  color: #333333;
-  background-color: #ffffff;
+.inputWrapper input {
+  border: none;
+  border-bottom: 1px solid #cccccc;
+  border-radius: 0;
+  padding: 20px 10px 15px;
+  color: #666666;
+  font-size: 16px;
+
+  &:focus {
+    box-shadow: none !important;
+  }
 }
 
-.input::placeholder {
-  color: #999999;
-}
-
-.input:focus {
-  border-color: #0091ea;
-  box-shadow: 0 0 0 1px #0091ea;
+.inputWrapper label {
+  left: 0;
+  padding: 0 10px;
 }
 
 /* Documents Column */
 .documentsColumn {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
 }
 
 .documentIconWrapper {
@@ -234,73 +240,84 @@
   justify-content: center;
 }
 
+.documentButton {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #cecdcd;
+
+    .documentBadge,
+    .documentIcon {
+      opacity: 0;
+    }
+
+    .documentPlus {
+      display: flex;
+      opacity: 1;
+    }
+  }
+}
+
 .documentIcon {
-  color: #666666;
+  width: 20px;
+  height: 20px;
+}
+
+.documentPlus {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
 }
 
 .documentBadge {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  background-color: #0091ea;
+  top: -2px;
+  right: -2px;
+  background-color: #666666;
   color: #ffffff;
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 5px;
-  border-radius: 10px;
-  min-width: 18px;
+  font-family: var(--font-family-proxima-nova);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  line-height: 1.2;
+  line-height: 1;
 }
 
-.chevronIcon {
-  color: #666666;
-  flex-shrink: 0;
+.showFilesBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: none;
   cursor: pointer;
-}
+  transition: all 0.2s ease-in-out;
 
-.chevronIcon:hover {
-  color: #0091ea;
-}
-
-/* Responsive */
-@media (max-width: 1200px) {
-  .container {
-    padding: 15px 40px 80px;
-  }
-
-  .tableHeader,
-  .invoiceRowContent {
-    grid-template-columns: auto 1.2fr 1.8fr 1.2fr 1fr 1.2fr;
-    gap: 12px;
-  }
-}
-
-@media (max-width: 768px) {
-  .container {
-    padding: 15px 20px 80px;
-  }
-
-  .actionsSection {
-    flex-direction: column;
-  }
-
-  .uploadBundleArea {
-    width: 100%;
-  }
-
-  .tableHeader,
-  .invoiceRowContent {
-    grid-template-columns: auto 1fr;
-    gap: 12px;
-  }
-
-  .tableHeaderCell {
-    display: none;
-  }
-
-  .tableHeaderCell:first-child,
-  .invoiceRowContent > *:first-child {
-    display: flex;
+  &:hover {
+    background-color: #cecdcd;
   }
 }

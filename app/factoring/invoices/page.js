@@ -1,14 +1,17 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { cn } from '@/lib/utils';
 import styles from './page.module.css';
 import Image from 'next/image';
+import FormInput from '@/app/components/FormInput';
 
 const Invoices = () => {
   const [invoices, setInvoices] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef(null);
+  const [isHeaderActive, setIsHeaderActive] = useState(false);
   const bundleInputRef = useRef(null);
+  const documentInputRefs = useRef({});
 
   const handleCreateInvoice = () => {
     const newInvoice = {
@@ -20,10 +23,15 @@ const Invoices = () => {
       documents: [],
     };
     setInvoices([...invoices, newInvoice]);
+    setIsHeaderActive(true);
   };
 
   const handleDeleteInvoice = (id) => {
-    setInvoices(invoices.filter((invoice) => invoice.id !== id));
+    const updatedInvoices = invoices.filter((invoice) => invoice.id !== id);
+    setInvoices(updatedInvoices);
+    if (updatedInvoices.length === 0) {
+      setIsHeaderActive(false);
+    }
   };
 
   const handleInvoiceChange = (id, field, value) => {
@@ -62,6 +70,16 @@ const Invoices = () => {
   };
 
   const handleDocumentUpload = (invoiceId, files) => {
+    // Filter only PDF files
+    const pdfFiles = Array.from(files).filter(
+      (file) => file.type === 'application/pdf'
+    );
+
+    if (pdfFiles.length === 0) {
+      // Optional: Show error message to user
+      return;
+    }
+
     setInvoices(
       invoices.map((invoice) =>
         invoice.id === invoiceId
@@ -69,7 +87,7 @@ const Invoices = () => {
               ...invoice,
               documents: [
                 ...invoice.documents,
-                ...files.map((file, index) => ({
+                ...pdfFiles.map((file, index) => ({
                   id: Date.now() + index,
                   name: file.name,
                   file: file,
@@ -79,6 +97,22 @@ const Invoices = () => {
           : invoice
       )
     );
+  };
+
+  const handleDocumentButtonClick = (invoiceId) => {
+    const inputRef = documentInputRefs.current[invoiceId];
+    if (inputRef) {
+      inputRef.click();
+    }
+  };
+
+  const handleDocumentFileSelect = (invoiceId, e) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handleDocumentUpload(invoiceId, files);
+    }
+    // Reset input value to allow selecting the same file again
+    e.target.value = '';
   };
 
   return (
@@ -135,7 +169,12 @@ const Invoices = () => {
       {/* Table Container */}
       <div className={styles.tableContainer}>
         {/* Table Header */}
-        <div className={styles.tableHeader}>
+        <div
+          className={cn(
+            styles.tableHeader,
+            isHeaderActive && styles.tableHeaderActive
+          )}
+        >
           <div className={styles.tableHeaderCell}>
             <Image
               src="/month-icon.svg"
@@ -182,131 +221,128 @@ const Invoices = () => {
                 onClick={() => handleDeleteInvoice(invoice.id)}
                 aria-label="Delete invoice"
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M3 6H5H21M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z"
-                    stroke="#666666"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/delete-icon.svg"
+                  alt="Delete"
+                  width={24}
+                  height={24}
+                />
               </button>
 
               {/* Invoice # Input */}
-              <div className={styles.inputWrapper}>
-                <input
-                  type="text"
-                  className={styles.input}
-                  placeholder="Invoice #"
-                  value={invoice.invoiceNumber}
-                  onChange={(e) =>
-                    handleInvoiceChange(
-                      invoice.id,
-                      'invoiceNumber',
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
+              <FormInput
+                id={`invoice-number-${invoice.id}`}
+                name="invoiceNumber"
+                type="text"
+                label="Invoice #"
+                className={styles.inputWrapper}
+                value={invoice.invoiceNumber}
+                onChange={(e) =>
+                  handleInvoiceChange(
+                    invoice.id,
+                    'invoiceNumber',
+                    e.target.value
+                  )
+                }
+              />
 
               {/* Customer Name Input */}
-              <div className={styles.inputWrapper}>
-                <input
-                  type="text"
-                  className={styles.input}
-                  placeholder="Customer Name"
-                  value={invoice.customerName}
-                  onChange={(e) =>
-                    handleInvoiceChange(
-                      invoice.id,
-                      'customerName',
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
+              <FormInput
+                id={`customer-name-${invoice.id}`}
+                name="customerName"
+                type="text"
+                label="Customer Name"
+                className={styles.inputWrapper}
+                value={invoice.customerName}
+                onChange={(e) =>
+                  handleInvoiceChange(
+                    invoice.id,
+                    'customerName',
+                    e.target.value
+                  )
+                }
+              />
 
               {/* PO # Input */}
-              <div className={styles.inputWrapper}>
-                <input
-                  type="text"
-                  className={styles.input}
-                  placeholder="PO #"
-                  value={invoice.poNumber}
-                  onChange={(e) =>
-                    handleInvoiceChange(invoice.id, 'poNumber', e.target.value)
-                  }
-                />
-              </div>
+              <FormInput
+                id={`po-number-${invoice.id}`}
+                name="poNumber"
+                type="text"
+                label="PO #"
+                className={styles.inputWrapper}
+                value={invoice.poNumber}
+                onChange={(e) =>
+                  handleInvoiceChange(invoice.id, 'poNumber', e.target.value)
+                }
+              />
 
               {/* Amount Input */}
-              <div className={styles.inputWrapper}>
-                <input
-                  type="text"
-                  className={styles.input}
-                  placeholder="Amount"
-                  value={invoice.amount}
-                  onChange={(e) =>
-                    handleInvoiceChange(invoice.id, 'amount', e.target.value)
-                  }
-                />
-              </div>
+              <FormInput
+                id={`amount-${invoice.id}`}
+                name="amount"
+                type="text"
+                label="Amount"
+                className={styles.inputWrapper}
+                value={invoice.amount}
+                onChange={(e) =>
+                  handleInvoiceChange(invoice.id, 'amount', e.target.value)
+                }
+              />
 
               {/* Documents Column */}
               <div className={styles.documentsColumn}>
                 <div className={styles.documentIconWrapper}>
-                  <svg
-                    className={styles.documentIcon}
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <button
+                    className={styles.documentButton}
+                    onClick={() => handleDocumentButtonClick(invoice.id)}
+                    type="button"
                   >
-                    <path
-                      d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z"
-                      stroke="#666666"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M14 2V8H20"
-                      stroke="#666666"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  {invoice.documents.length > 0 && (
-                    <span className={styles.documentBadge}>
-                      {invoice.documents.length}
-                    </span>
-                  )}
-                </div>
-                <svg
-                  className={styles.chevronIcon}
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="#666666"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                    <div className={styles.documentIconContainer}>
+                      <Image
+                        className={styles.documentIcon}
+                        src="/document-icon.svg"
+                        alt="Document"
+                        width={20}
+                        height={20}
+                      />
+                      <span className={styles.documentBadge}>
+                        {invoice.documents.length}
+                      </span>
+                    </div>
+
+                    <div className={styles.documentPlus}>
+                      <Image
+                        className={styles.documentPlusIcon}
+                        src="/plus-icon.svg"
+                        alt="Plus"
+                        width={20}
+                        height={20}
+                      />
+                    </div>
+                  </button>
+                  <input
+                    ref={(el) => (documentInputRefs.current[invoice.id] = el)}
+                    type="file"
+                    accept="application/pdf"
+                    multiple
+                    onChange={(e) => handleDocumentFileSelect(invoice.id, e)}
+                    className={styles.fileInput}
                   />
-                </svg>
+                </div>
+                <button className={styles.showFilesBtn}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 10.79 7.2"
+                    width={12}
+                    height={12}
+                  >
+                    <g id="arrow-left">
+                      <path
+                        d="M10.79,1.12a.47.47,0,0,0-.16-.31L9.8.11A.44.44,0,0,0,9.47,0a.49.49,0,0,0-.32.16L5.48,4.41a.12.12,0,0,1-.08,0,.13.13,0,0,1-.09,0L1.64.16A.47.47,0,0,0,1,.11L.16.81A.47.47,0,0,0,0,1.12a.42.42,0,0,0,.11.32L5.05,7.05a.45.45,0,0,0,.34.15.45.45,0,0,0,.35-.15l4.94-5.61A.41.41,0,0,0,10.79,1.12Z" fill="#666666"
+                      />
+                    </g>
+                  </svg>
+                </button>
               </div>
             </div>
           </div>

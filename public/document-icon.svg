@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 16 20" version="1.1">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>icn/document</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icn/document" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="construction-paper-home" transform="translate(7.800000, 9.975000) scale(-1, 1) translate(-7.800000, -9.975000) translate(0.300000, 0.600000)" stroke="#666666" stroke-width="1.75">
+            <path d="M9.89665179,0.502232143 L1.33928571,0.502232143 C0.784535408,0.502232143 0.334821429,0.951946122 0.334821429,1.50669643 L0.334821429,17.2433036 C0.334821429,17.7980539 0.784535408,18.2477679 1.33928571,18.2477679 L13.3928571,18.2477679 C13.9476074,18.2477679 14.3973214,17.7980539 14.3973214,17.2433036 L14.3973214,5.00290179 C14.3972646,4.73668714 14.2915301,4.48138285 14.1033482,4.29308036 L10.6064732,0.796205357 C10.4181707,0.608023495 10.1628664,0.502288983 9.89665179,0.502232143 Z" id="Path"/>
+            <path d="M10.7243304,1.125 L10.7243304,3.17745536 C10.7243304,3.73220566 11.1740443,4.18191964 11.7287946,4.18191964 L13.78125,4.18191964 L10.7243304,1.125 Z" id="Path" fill="#666666"/>
+        </g>
+    </g>
+</svg>
