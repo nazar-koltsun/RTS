@@ -39,6 +39,10 @@
   background-color: #fff;
   transition: transform 0.15s ease-in-out, top 0.15s ease-in-out,
     padding 0.15s ease-in-out;
+
+  @media (max-width: 1200px) {
+    font-size: 14px;
+  }
 }
 
 .input {

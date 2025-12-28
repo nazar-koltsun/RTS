@@ -1,20 +1,143 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import styles from './page.module.css';
 import Image from 'next/image';
 import FormInput from '@/app/components/FormInput';
 import FilesPreviewBlock from './components/FilesPreviewBlock';
 
+const STORAGE_KEY = 'invoices_data';
+
+// Convert File to base64
+const fileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
+// Convert base64 to File-like object
+const base64ToFile = (base64String, fileName, mimeType) => {
+  const byteString = atob(base64String.split(',')[1]);
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+  const blob = new Blob([ab], { type: mimeType });
+  return new File([blob], fileName, { type: mimeType });
+};
+
+// Save invoices to localStorage
+const saveInvoicesToStorage = async (invoices) => {
+  try {
+    const invoicesToSave = await Promise.all(
+      invoices.map(async (invoice) => {
+        const documents = await Promise.all(
+          invoice.documents.map(async (doc) => {
+            // If we have a File object, convert it to base64
+            if (doc.file && doc.file instanceof File) {
+              const base64 = await fileToBase64(doc.file);
+              return {
+                id: doc.id,
+                name: doc.name,
+                fileBase64: base64,
+                fileName: doc.file.name,
+                fileType: doc.file.type,
+              };
+            }
+            // If fileBase64 already exists (from localStorage), keep it (without file object)
+            if (doc.fileBase64) {
+              return {
+                id: doc.id,
+                name: doc.name,
+                fileBase64: doc.fileBase64,
+                fileName: doc.fileName,
+                fileType: doc.fileType,
+              };
+            }
+            // Fallback: return doc without file/blobUrl
+            return {
+              id: doc.id,
+              name: doc.name,
+            };
+          })
+        );
+        return {
+          ...invoice,
+          documents,
+        };
+      })
+    );
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(invoicesToSave));
+  } catch (error) {
+    console.error('Error saving invoices to localStorage:', error);
+  }
+};
+
+// Load invoices from localStorage
+const loadInvoicesFromStorage = () => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return null;
+
+    const invoices = JSON.parse(stored);
+    return invoices.map((invoice) => {
+      const documents = invoice.documents.map((doc) => {
+        // If we have base64 data, convert it back to File
+        if (doc.fileBase64 && doc.fileName && doc.fileType) {
+          const file = base64ToFile(doc.fileBase64, doc.fileName, doc.fileType);
+          // Create blob URL for preview
+          const blobUrl = URL.createObjectURL(file);
+          return {
+            id: doc.id,
+            name: doc.name || doc.fileName,
+            file,
+            blobUrl,
+          };
+        }
+        // Fallback: return doc as-is (shouldn't happen, but handle gracefully)
+        return {
+          id: doc.id,
+          name: doc.name,
+        };
+      });
+      return {
+        ...invoice,
+        documents,
+      };
+    });
+  } catch (error) {
+    console.error('Error loading invoices from localStorage:', error);
+    return null;
+  }
+};
+
 const Invoices = () => {
-  const [invoices, setInvoices] = useState([]);
+  // Initialize state from localStorage
+  const [invoices, setInvoices] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const loaded = loadInvoicesFromStorage();
+      return loaded || [];
+    }
+    return [];
+  });
   const [isDragging, setIsDragging] = useState(false);
-  const [isHeaderActive, setIsHeaderActive] = useState(false);
+  const [isHeaderActive, setIsHeaderActive] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const loaded = loadInvoicesFromStorage();
+      return loaded && loaded.length > 0;
+    }
+    return false;
+  });
   const [openPreviewId, setOpenPreviewId] = useState(null);
   const bundleInputRef = useRef(null);
   const documentInputRefs = useRef({});
   const previewFileInputRefs = useRef({});
+  const isInitialLoad = useRef(true);
 
   const handleCreateInvoice = () => {
     const newInvoice = {
@@ -81,6 +204,18 @@ const Invoices = () => {
       invoice.amount?.trim() !== ''
     );
   };
+
+  // Mark initial load as complete after first render
+  useEffect(() => {
+    isInitialLoad.current = false;
+  }, []);
+
+  // Save invoices to localStorage whenever they change (but not on initial load)
+  useEffect(() => {
+    if (!isInitialLoad.current) {
+      saveInvoicesToStorage(invoices);
+    }
+  }, [invoices]);
 
   const handleDragOver = (e) => {
     e.preventDefault();
