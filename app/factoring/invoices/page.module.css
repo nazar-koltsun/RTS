@@ -167,6 +167,15 @@
   bottom: 0;
   width: 6px;
   background-color: #ef3824;
+  transition: background-color 0.3s ease-out;
+}
+
+.invoiceRowLeftBorderFilled {
+  background-color: #f7b500;
+}
+
+.invoiceRowLeftBorderWithDocuments {
+  background-color: #72bf44;
 }
 
 .invoiceRowContent {

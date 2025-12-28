@@ -202,12 +202,7 @@ const FilesPreviewBlock = ({
               type="button"
               onClick={handleCloseNotes}
             >
-              <Image
-                src="/close-icon.svg"
-                alt="Close"
-                width={15}
-                height={15}
-              />
+              <Image src="/close-icon.svg" alt="Close" width={15} height={15} />
             </button>
             <div className={styles.notesCharCount}>
               {(notes || '').length}/255

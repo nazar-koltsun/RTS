@@ -72,6 +72,16 @@ const Invoices = () => {
     return formattedValue.replace(/[$,]/g, '');
   };
 
+  // Check if all text fields are filled
+  const isAllFieldsFilled = (invoice) => {
+    return (
+      invoice.invoiceNumber?.trim() !== '' &&
+      invoice.customerName?.trim() !== '' &&
+      invoice.poNumber?.trim() !== '' &&
+      invoice.amount?.trim() !== ''
+    );
+  };
+
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);
@@ -285,7 +295,17 @@ const Invoices = () => {
         {/* Invoice Rows */}
         {invoices.map((invoice) => (
           <div key={invoice.id} className={styles.invoiceRow}>
-            <div className={styles.invoiceRowLeftBorder}></div>
+            <div
+              className={cn(
+                styles.invoiceRowLeftBorder,
+                isAllFieldsFilled(invoice) &&
+                  invoice.documents?.length > 0 &&
+                  styles.invoiceRowLeftBorderWithDocuments,
+                isAllFieldsFilled(invoice) &&
+                  (!invoice.documents || invoice.documents.length === 0) &&
+                  styles.invoiceRowLeftBorderFilled
+              )}
+            ></div>
             <div
               className={cn(
                 styles.invoiceRowContent,
