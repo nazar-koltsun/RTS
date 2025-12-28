@@ -1,6 +1,7 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import Image from 'next/image';
 import styles from './FilesPreviewBlock.module.css';
 
 const FilesPreviewBlock = ({
@@ -12,9 +13,18 @@ const FilesPreviewBlock = ({
   fileInputClick,
 }) => {
   const notesInputRef = useRef(null);
+  const [isNotesExpanded, setIsNotesExpanded] = useState(!!notes);
 
   const handleNotesButtonClick = () => {
-    notesInputRef.current?.focus();
+    setIsNotesExpanded(true);
+    // Focus the textarea after a short delay to ensure it's rendered
+    setTimeout(() => {
+      notesInputRef.current?.focus();
+    }, 0);
+  };
+
+  const handleCloseNotes = () => {
+    setIsNotesExpanded(false);
   };
 
   return (
@@ -28,19 +38,12 @@ const FilesPreviewBlock = ({
             type="button"
           >
             <div className={styles.addFileIcon}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width={24}
-                height={24}
-              >
-                <path
-                  d="M12 4v16m8-8H4"
-                  stroke="#999999"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
+              <Image
+                src="/plus-icon.svg"
+                alt="Add File"
+                width={14}
+                height={14}
+              />
             </div>
           </button>
           <div className={styles.addFileText}>Add File</div>
@@ -105,13 +108,14 @@ const FilesPreviewBlock = ({
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
+                            onDeleteDocument(invoiceId, doc.id);
                           }}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"
-                            width={16}
-                            height={16}
+                            width={14}
+                            height={14}
                           >
                             <path
                               d="M18 6L6 18M6 6l12 12"
@@ -160,54 +164,56 @@ const FilesPreviewBlock = ({
 
       {/* Notes Section */}
       <div className={styles.notesSection}>
-        <button
-          className={styles.addNotesButton}
-          type="button"
-          onClick={handleNotesButtonClick}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width={16}
-            height={16}
+        {!isNotesExpanded ? (
+          <button
+            className={styles.addNotesButton}
+            type="button"
+            onClick={handleNotesButtonClick}
           >
-            <path
-              d="M12 4v16m8-8H4"
-              stroke="#999999"
-              strokeWidth="2"
-              strokeLinecap="round"
+            <Image
+              src="/notes-icon.svg"
+              alt="Add Notes"
+              width={20}
+              height={20}
             />
-          </svg>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width={16}
-            height={16}
-          >
-            <path
-              d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-              fill="none"
-              stroke="#999999"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            <span className={styles.addNotesText}>ADD NOTES</span>
+          </button>
+        ) : (
+          <div className={styles.notesInputWrapper}>
+            <Image
+              src="/notes-icon.svg"
+              alt="Notes"
+              width={20}
+              height={20}
+              className={styles.notesIcon}
             />
-          </svg>
-          <span className={styles.addNotesText}>ADD NOTES</span>
-        </button>
-        <div className={styles.notesInputWrapper}>
-          <textarea
-            ref={notesInputRef}
-            className={styles.notesInput}
-            value={notes || ''}
-            onChange={(e) => onNotesChange(invoiceId, e.target.value)}
-            placeholder=""
-            maxLength={255}
-          />
-          <div className={styles.notesCharCount}>
-            {(notes || '').length}/255
+            <input
+              ref={notesInputRef}
+              name="notes"
+              id="notes"
+              className={styles.notesInput}
+              value={notes || ''}
+              onChange={(e) => onNotesChange(invoiceId, e.target.value)}
+              placeholder=""
+              maxLength={255}
+            />
+            <button
+              className={styles.closeNotesButton}
+              type="button"
+              onClick={handleCloseNotes}
+            >
+              <Image
+                src="/close-icon.svg"
+                alt="Close"
+                width={15}
+                height={15}
+              />
+            </button>
+            <div className={styles.notesCharCount}>
+              {(notes || '').length}/255
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
