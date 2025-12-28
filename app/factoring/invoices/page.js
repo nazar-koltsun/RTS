@@ -46,6 +46,32 @@ const Invoices = () => {
     );
   };
 
+  // Format amount with $ and commas
+  const formatAmount = (value) => {
+    if (!value || value === '') return '';
+    // Remove any existing formatting ($, commas)
+    const numericValue = value.toString().replace(/[$,]/g, '');
+    if (numericValue === '' || numericValue === '.') return '';
+
+    // Handle decimal numbers
+    const parts = numericValue.split('.');
+    const integerPart = parts[0] || '';
+    const decimalPart = parts[1] !== undefined ? '.' + parts[1] : '';
+
+    if (integerPart === '' && decimalPart === '') return '';
+
+    // Add commas to integer part using regex
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    return '$' + formattedInteger + decimalPart;
+  };
+
+  // Parse formatted amount to raw number string
+  const parseAmount = (formattedValue) => {
+    // Remove $ and commas, keep numbers and decimal point
+    return formattedValue.replace(/[$,]/g, '');
+  };
+
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);
@@ -335,10 +361,25 @@ const Invoices = () => {
                 type="text"
                 label="Amount"
                 className={styles.inputWrapper}
-                value={invoice.amount}
-                onChange={(e) =>
-                  handleInvoiceChange(invoice.id, 'amount', e.target.value)
-                }
+                value={formatAmount(invoice.amount)}
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+
+                  // Allow empty string
+                  if (inputValue === '') {
+                    handleInvoiceChange(invoice.id, 'amount', '');
+                    return;
+                  }
+
+                  // Remove $ and commas for validation
+                  const rawValue = parseAmount(inputValue);
+
+                  // Only allow numbers and decimal point
+                  if (/^\d*\.?\d*$/.test(rawValue)) {
+                    handleInvoiceChange(invoice.id, 'amount', rawValue);
+                  }
+                }}
+                inputMode="decimal"
               />
 
               {/* Documents Column */}
