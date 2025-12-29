@@ -94,3 +94,5 @@ const { data, error } = await supabase
 📝 **If you need a custom table**: Follow the steps above to create one
 
 
+
+

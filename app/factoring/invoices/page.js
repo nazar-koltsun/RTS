@@ -629,6 +629,8 @@ const Invoices = () => {
           </div>
         ))}
       </div>
+
+      {/* Notes Section */}
     </div>
   );
 };
