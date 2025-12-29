@@ -6,6 +6,7 @@ import styles from './page.module.css';
 import Image from 'next/image';
 import FormInput from '@/app/components/FormInput';
 import FilesPreviewBlock from './components/FilesPreviewBlock';
+import PurchaseSection from './components/PurchaseSection';
 
 const STORAGE_KEY = 'invoices_data';
 
@@ -134,6 +135,7 @@ const Invoices = () => {
     return false;
   });
   const [openPreviewId, setOpenPreviewId] = useState(null);
+  const [generateCoverPages, setGenerateCoverPages] = useState(true);
   const bundleInputRef = useRef(null);
   const documentInputRefs = useRef({});
   const previewFileInputRefs = useRef({});
@@ -330,6 +332,32 @@ const Invoices = () => {
           : invoice
       )
     );
+  };
+
+  // Handle remove all invoices
+  const handleRemoveAll = () => {
+    setInvoices([]);
+    setIsHeaderActive(false);
+  };
+
+  // Check if all invoices are valid (all fields filled + documents uploaded)
+  const areAllInvoicesValid = () => {
+    if (invoices.length === 0) return false;
+    return invoices.every(
+      (invoice) =>
+        isAllFieldsFilled(invoice) &&
+        invoice.documents &&
+        invoice.documents.length > 0
+    );
+  };
+
+  // Handle submit purchase
+  const handleSubmitPurchase = () => {
+    // TODO: Implement submit to database logic
+    console.log('Submitting purchase:', {
+      invoices,
+      generateCoverPages,
+    });
   };
 
   return (
@@ -630,7 +658,15 @@ const Invoices = () => {
         ))}
       </div>
 
-      {/* Notes Section */}
+      {/* Purchase/Submit Section */}
+      <PurchaseSection
+        invoices={invoices}
+        onRemoveAll={handleRemoveAll}
+        onSubmitPurchase={handleSubmitPurchase}
+        generateCoverPages={generateCoverPages}
+        onGenerateCoverPagesChange={setGenerateCoverPages}
+        isSubmitDisabled={!areAllInvoicesValid()}
+      />
     </div>
   );
 };
