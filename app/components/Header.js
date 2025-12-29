@@ -15,7 +15,7 @@ const Header = () => {
   const navItems = [
     { label: 'Overview', href: '/factoring/home' },
     { label: 'Invoices', href: '/factoring/invoices' },
-    { label: 'Reports', href: '/' },
+    { label: 'Reports', href: '/factoring/reports/invoice-search' },
     { label: 'FAQ', href: '/' },
   ];
 

@@ -1,0 +1,359 @@
+.container {
+  padding: 15px 64px 80px;
+  font-family: var(--font-family-proxima-nova);
+  color: var(--font-default-color);
+  font-size: 16px;
+}
+
+/* Report Selection */
+.reportSelection {
+  margin-bottom: 60px;
+}
+
+.selectReportLabel {
+  padding: 10px 0 5px;
+  font-size: 11px;
+  color: #999999;
+  font-weight: 400;
+}
+
+.reportDropdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 200px;
+  transition: all 0.15s ease-in-out;
+  min-width: 315px;
+  background-color: #fff;
+  border-radius: 20px;
+  padding: 0px 15px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.22);
+
+  & span {
+    color: #333333;
+    font-size: 14px;
+    padding: 10px 32px 4px 0;
+  }
+}
+
+.dropdownArrow {
+  width: 24px;
+  height: 24px;
+}
+
+.reportDropdown:hover {
+  border-color: #0091ea;
+}
+
+/* Search Bar */
+.searchBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ecebeb;
+  padding: 0 24px 0 14px;
+  margin-bottom: 20px;
+  gap: 20px;
+  flex-wrap: wrap;
+  min-height: 64px;
+}
+
+.searchInputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.searchInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 5px;
+  border: 1px solid #c9cace;
+  padding: 0 12px;
+  min-width: 200px;
+  height: 50px;
+  transition: all 0.15s ease-in-out;
+}
+
+.searchInputWrapper:focus-within {
+  border-color: #0091ea;
+  box-shadow: 0 0 0 1px #0091ea;
+}
+
+.searchIcon {
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 12px 0;
+  font-size: 16px;
+  font-weight: 400;
+  font-family: var(--font-family-default);
+  color: var(--font-default-color);
+  background-color: transparent;
+}
+
+.searchInput::placeholder {
+  color: var(--font-light-color);
+}
+
+.viewButton {
+  padding: 12px 24px;
+  background-color: #0091ea;
+  color: #ffffff;
+  border: none;
+  border-radius: 3px;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.25s ease-in-out;
+  font-family: var(--font-family-default);
+  white-space: nowrap;
+  height: 50px;
+}
+
+.viewButton:hover {
+  background-color: #0781d2;
+}
+
+.actionIcons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 3px;
+  transition: background-color 0.2s ease-in-out;
+  color: var(--font-light-color);
+}
+
+.iconButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.iconButton svg {
+  display: block;
+}
+
+/* Table Container */
+.tableContainer {
+  background-color: #ffffff;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+}
+
+.table thead {
+  background-color: #ffffff;
+}
+
+.table thead tr {
+  border-bottom: 1px solid #eeeeee;
+}
+
+.tableHeaderCell {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--font-default-color);
+  text-align: left;
+  font-family: var(--font-family-proxima-nova);
+  letter-spacing: 0.3px;
+  padding: 16px 20px;
+  width: 120px;
+}
+
+.tableHeaderCell:nth-child(1) {
+  width: 120px;
+}
+
+.tableHeaderCell:nth-child(2) {
+  width: 180px;
+}
+
+.tableHeaderCell:nth-child(3) {
+  width: 120px;
+}
+
+.tableHeaderCell:nth-child(4) {
+  width: 120px;
+}
+
+.tableHeaderCell:nth-child(5) {
+  width: 140px;
+}
+
+.tableHeaderCell:nth-child(6) {
+  width: 200px;
+}
+
+.tableHeaderCell:nth-child(7) {
+  width: 130px;
+}
+
+.tableHeaderCell:nth-child(8) {
+  width: 100px;
+}
+
+.table tbody {
+  min-height: 200px;
+}
+
+.tableRow {
+  border-bottom: 1px solid #eeeeee;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.tableRow:hover {
+  background-color: #f9f9f9;
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.tableCell {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--font-default-color);
+  text-align: left;
+  font-family: var(--font-family-default);
+  word-break: break-word;
+  letter-spacing: 0.3px;
+  padding: 16px 20px;
+}
+
+.emptyState {
+  min-height: 200px;
+  padding: 0;
+  border: none;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  margin-top: 0;
+}
+
+.paginationLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rowsPerPageLabel {
+  font-size: 14px;
+  color: var(--font-light-color);
+  font-weight: 400;
+}
+
+.rowsPerPageDropdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  border: 1px solid #c9cace;
+  border-radius: 3px;
+  padding: 8px 12px;
+  min-width: 60px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--font-default-color);
+  transition: all 0.15s ease-in-out;
+}
+
+.rowsPerPageDropdown:hover {
+  border-color: #0091ea;
+}
+
+.paginationRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.paginationInfo {
+  font-size: 14px;
+  color: var(--font-light-color);
+  font-weight: 400;
+}
+
+.paginationButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 3px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.paginationButton:hover:not(:disabled) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.paginationButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (max-width: 1400px) {
+  .tableHeaderCell:nth-child(1) {
+    width: 100px;
+  }
+
+  .tableHeaderCell:nth-child(2) {
+    width: 150px;
+  }
+
+  .tableHeaderCell:nth-child(3) {
+    width: 100px;
+  }
+
+  .tableHeaderCell:nth-child(4) {
+    width: 100px;
+  }
+
+  .tableHeaderCell:nth-child(5) {
+    width: 120px;
+  }
+
+  .tableHeaderCell:nth-child(6) {
+    width: 150px;
+  }
+
+  .tableHeaderCell:nth-child(7) {
+    width: 110px;
+  }
+
+  .tableHeaderCell:nth-child(8) {
+    width: 80px;
+  }
+}
