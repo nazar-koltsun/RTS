@@ -72,6 +72,7 @@ const PurchaseSection = ({
   generateCoverPages,
   onGenerateCoverPagesChange,
   isSubmitDisabled = false,
+  isSubmitting = false,
 }) => {
   // Calculate total amount from all invoices
   const calculateTotalAmount = () => {
@@ -123,7 +124,7 @@ const PurchaseSection = ({
         onClick={onSubmitPurchase}
         disabled={isSubmitDisabled}
       >
-        Submit purchase
+        {isSubmitting ? 'Submitting...' : 'Submit purchase'}
       </button>
     </div>
   );

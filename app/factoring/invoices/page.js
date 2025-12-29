@@ -7,6 +7,8 @@ import Image from 'next/image';
 import FormInput from '@/app/components/FormInput';
 import FilesPreviewBlock from './components/FilesPreviewBlock';
 import PurchaseSection from './components/PurchaseSection';
+import { supabase, restoreSession } from '@/lib/supabase';
+import { uploadPDF } from '@/lib/supabase-storage';
 
 const STORAGE_KEY = 'invoices_data';
 
@@ -136,6 +138,7 @@ const Invoices = () => {
   });
   const [openPreviewId, setOpenPreviewId] = useState(null);
   const [generateCoverPages, setGenerateCoverPages] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const bundleInputRef = useRef(null);
   const documentInputRefs = useRef({});
   const previewFileInputRefs = useRef({});
@@ -352,12 +355,123 @@ const Invoices = () => {
   };
 
   // Handle submit purchase
-  const handleSubmitPurchase = () => {
-    // TODO: Implement submit to database logic
-    console.log('Submitting purchase:', {
-      invoices,
-      generateCoverPages,
-    });
+  const handleSubmitPurchase = async () => {
+    if (!areAllInvoicesValid()) {
+      console.error('Cannot submit: not all invoices are valid');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Restore session if needed
+      await restoreSession();
+
+      // Check if user is authenticated
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session) {
+        throw new Error(
+          'You must be logged in to submit invoices. Please log in and try again.'
+        );
+      }
+
+      // Process each invoice: upload documents and create database record
+      const invoicePromises = invoices.map(async (invoice) => {
+        // Upload all documents for this invoice
+        const documentUrls = await Promise.all(
+          invoice.documents.map(async (doc) => {
+            if (doc.file && doc.file instanceof File) {
+              // Upload the file to Supabase storage
+              try {
+                const url = await uploadPDF(doc.file, 'invoice-documents');
+                return url;
+              } catch (uploadError) {
+                console.error(
+                  `Error uploading document ${doc.name}:`,
+                  uploadError
+                );
+                // Continue with other documents even if one fails
+                // You can choose to throw here if you want to fail the entire invoice
+                return null;
+              }
+            }
+            // If document already has a URL (from previous submission), use it
+            return doc.url || null;
+          })
+        );
+
+        // Filter out any null values (failed uploads)
+        const validDocumentUrls = documentUrls.filter((url) => url !== null);
+
+        // Parse amount (remove $ and commas)
+        const amountValue = parseAmount(invoice.amount || '0');
+        const amount = parseFloat(amountValue) || 0;
+
+        // Insert invoice into database
+        const { data, error } = await supabase
+          .from('invoices')
+          .insert([
+            {
+              invoice_number: invoice.invoiceNumber,
+              customer_name: invoice.customerName,
+              po_number: invoice.poNumber,
+              amount: amount,
+              documents: validDocumentUrls, // Array of PDF URLs
+              notes: invoice.notes || null,
+            },
+          ])
+          .select();
+
+        if (error) {
+          throw new Error(
+            `Failed to save invoice ${invoice.invoiceNumber}: ${error.message}`
+          );
+        }
+
+        return data;
+      });
+
+      // Wait for all invoices to be processed
+      const results = await Promise.all(invoicePromises);
+
+      console.log('Successfully submitted invoices:', results);
+
+      // Clear invoices after successful submission
+      setInvoices([]);
+      setIsHeaderActive(false);
+
+      // Optionally show success message or redirect
+      alert(`Successfully submitted ${results.length} invoice(s)!`);
+    } catch (error) {
+      console.error('Error submitting invoices:', error);
+
+      // Provide more helpful error message
+      let errorMessage = error.message || 'Unknown error occurred';
+
+      if (
+        error.message?.includes('row-level security') ||
+        error.message?.includes('RLS')
+      ) {
+        errorMessage =
+          'Storage bucket access denied. Please configure storage bucket policies in Supabase:\n\n' +
+          '1. Go to Storage → Policies → Select "invoice-documents" bucket\n' +
+          '2. Create a policy for INSERT operations:\n' +
+          '   - Policy name: "Allow authenticated uploads"\n' +
+          '   - Allowed operation: INSERT\n' +
+          "   - Policy: bucket_id = 'invoice-documents' AND auth.role() = 'authenticated'\n\n" +
+          'See STORAGE_SETUP.md for detailed instructions.';
+      } else if (error.message?.includes('must be logged in')) {
+        errorMessage = 'Please log in and try again.';
+      }
+
+      alert(`Error submitting invoices: ${errorMessage}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -665,7 +779,8 @@ const Invoices = () => {
         onSubmitPurchase={handleSubmitPurchase}
         generateCoverPages={generateCoverPages}
         onGenerateCoverPagesChange={setGenerateCoverPages}
-        isSubmitDisabled={!areAllInvoicesValid()}
+        isSubmitDisabled={!areAllInvoicesValid() || isSubmitting}
+        isSubmitting={isSubmitting}
       />
     </div>
   );
