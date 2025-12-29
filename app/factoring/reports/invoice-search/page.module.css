@@ -61,72 +61,34 @@
 .searchInputs {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex: 1;
+  gap: 14px;
 }
 
-.searchInputWrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background-color: #ffffff;
-  border-radius: 5px;
-  border: 1px solid #c9cace;
-  padding: 0 12px;
-  min-width: 200px;
-  height: 50px;
-  transition: all 0.15s ease-in-out;
+.searchInputs .viewButton {
+  height: 36px;
+  font-size: 13.33px;
+  letter-spacing: 0.5px;
+  border-radius: 24px;
+  transition: background-color 0.1s ease-in-out;
+
+  &:hover {
+    background-color: #005c95;
+  }
 }
 
-.searchInputWrapper:focus-within {
-  border-color: #0091ea;
-  box-shadow: 0 0 0 1px #0091ea;
-}
+.viewButton:disabled {
+  background-color: rgb(153, 153, 153);
+  cursor: not-allowed;
 
-.searchIcon {
-  flex-shrink: 0;
-  margin-right: 8px;
-}
-
-.searchInput {
-  flex: 1;
-  border: none;
-  outline: none;
-  padding: 12px 0;
-  font-size: 16px;
-  font-weight: 400;
-  font-family: var(--font-family-default);
-  color: var(--font-default-color);
-  background-color: transparent;
-}
-
-.searchInput::placeholder {
-  color: var(--font-light-color);
-}
-
-.viewButton {
-  padding: 12px 24px;
-  background-color: #0091ea;
-  color: #ffffff;
-  border: none;
-  border-radius: 3px;
-  font-size: 16px;
-  font-weight: 400;
-  cursor: pointer;
-  transition: background-color 0.25s ease-in-out;
-  font-family: var(--font-family-default);
-  white-space: nowrap;
-  height: 50px;
-}
-
-.viewButton:hover {
-  background-color: #0781d2;
+  &:hover {
+    background-color: rgb(153, 153, 153);
+  }
 }
 
 .actionIcons {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 24px;
 }
 
 .iconButton {
