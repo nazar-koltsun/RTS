@@ -10,40 +10,101 @@ import DownloadIcon from '@/app/components/icons/DownloadIcon';
 import FilterIcon from '@/app/components/icons/FilterIcon';
 import ArrowLeftIcon from '@/app/components/icons/ArrowLeftIcon';
 import ArrowRightIcon from '@/app/components/icons/ArrowRightIcon';
+import { supabase } from '@/lib/supabase';
 
 const InvoiceSearchPage = () => {
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [referenceNumber, setReferenceNumber] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-
-  // Mock data - replace with actual data fetching
   const [tableData, setTableData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleView = () => {
-    // Mock search result - replace with actual API call
-    if (invoiceNumber === '6834') {
-      setTableData([
-        {
-          invoiceNumber: '6834',
-          customerName: 'PACE LOGISTICS INC',
-          invoiceDate: '12/18/2025',
-          batchNumber: '14588232',
-          purchaseOrder: '31450-36401',
-          description: '',
-          invoiceAmount: '$150.00',
-          balance: '$150.00',
-        },
-      ]);
-      setCurrentPage(1);
-    } else {
-      setTableData([]);
+  // Format amount as currency
+  const formatCurrency = (amount) => {
+    if (amount === null || amount === undefined) return '';
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    if (isNaN(numAmount)) return '';
+    return `$${numAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+  };
+
+  // Format date as MM/DD/YYYY
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '';
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${month}/${day}/${year}`;
+    } catch {
+      return '';
     }
   };
 
+  const handleView = async () => {
+    if (!invoiceNumber || invoiceNumber.trim() === '') {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setCurrentPage(1);
+
+    try {
+      // Build query based on search criteria
+      let query = supabase.from('invoices').select('*');
+
+      // Search by invoice number (required)
+      query = query.ilike('invoice_number', `%${invoiceNumber.trim()}%`);
+
+      // If reference number is provided, also filter by po_number
+      if (referenceNumber && referenceNumber.trim() !== '') {
+        query = query.ilike('po_number', `%${referenceNumber.trim()}%`);
+      }
+
+      const { data, error: queryError } = await query.order('created_at', {
+        ascending: false,
+      });
+
+      if (queryError) {
+        throw queryError;
+      }
+
+      // Map database fields to display fields
+      const mappedData = (data || []).map((invoice) => ({
+        invoiceNumber: invoice.invoice_number || '',
+        customerName: invoice.customer_name || '',
+        invoiceDate: formatDate(invoice.invoice_date || invoice.created_at),
+        batchNumber: invoice.batch_number || '',
+        purchaseOrder: invoice.po_number || '',
+        description: invoice.description || invoice.notes || '',
+        invoiceAmount: formatCurrency(invoice.amount),
+        balance: formatCurrency(invoice.balance || invoice.amount),
+      }));
+
+      setTableData(mappedData);
+    } catch (err) {
+      console.error('Error searching invoices:', err);
+      setError(err.message || 'Failed to search invoices. Please try again.');
+      setTableData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Pagination calculations
   const totalRows = tableData.length;
   const startRow = totalRows > 0 ? (currentPage - 1) * rowsPerPage + 1 : 0;
   const endRow = Math.min(currentPage * rowsPerPage, totalRows);
+  const paginatedData = tableData.slice(startRow - 1, endRow);
+
+  // Reset to first page when data changes
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
 
   return (
     <div className={styles.container}>
@@ -78,9 +139,9 @@ const InvoiceSearchPage = () => {
           <Button
             className={styles.viewButton}
             onClick={handleView}
-            disabled={!invoiceNumber || invoiceNumber.trim() === ''}
+            disabled={!invoiceNumber || invoiceNumber.trim() === '' || loading}
           >
-            View
+            {loading ? 'Searching...' : 'View'}
           </Button>
         </div>
         <div className={styles.actionIcons}>
@@ -90,6 +151,13 @@ const InvoiceSearchPage = () => {
           <FilterIcon fill="#a8a8a8" />
         </div>
       </div>
+
+      {/* Error Message */}
+      {error && (
+        <div style={{ color: 'red', padding: '10px', marginBottom: '10px' }}>
+          {error}
+        </div>
+      )}
 
       {/* Table */}
       <div className={styles.tableContainer}>
@@ -107,12 +175,20 @@ const InvoiceSearchPage = () => {
             </tr>
           </thead>
           <tbody>
-            {tableData.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan="8" className={styles.emptyState}>
+                  <div style={{ textAlign: 'center', padding: '20px' }}>
+                    Loading...
+                  </div>
+                </td>
+              </tr>
+            ) : paginatedData.length === 0 ? (
               <tr>
                 <td colSpan="8" className={styles.emptyState}></td>
               </tr>
             ) : (
-              tableData.map((row, index) => (
+              paginatedData.map((row, index) => (
                 <tr key={index} className={styles.tableRow}>
                   <td className={styles.tableCell}>{row.invoiceNumber}</td>
                   <td className={styles.tableCell}>{row.customerName}</td>
@@ -146,16 +222,16 @@ const InvoiceSearchPage = () => {
           </span>
           <button
             className={styles.paginationButton}
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1 || loading}
+            onClick={() => handlePageChange(currentPage - 1)}
             aria-label="Previous page"
           >
             <ArrowLeftIcon />
           </button>
           <button
             className={styles.paginationButton}
-            disabled={endRow >= totalRows}
-            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={endRow >= totalRows || loading}
+            onClick={() => handlePageChange(currentPage + 1)}
             aria-label="Next page"
           >
             <ArrowRightIcon />
