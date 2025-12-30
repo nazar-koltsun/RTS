@@ -1,7 +1,10 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { checkSessionAgeAndLogout } from '@/lib/supabase';
 import styles from './page.module.css';
 import Link from 'next/link';
 
@@ -70,6 +73,13 @@ function StatusItem({ label, value, subLabel }) {
 }
 
 export default function Factoring() {
+  const router = useRouter();
+
+  // Check session age on mount - logout if session is older than 2 hours
+  useEffect(() => {
+    checkSessionAgeAndLogout((path) => router.push(path));
+  }, [router]);
+
   // Data for the page
   const unfundedInvoices = {
     held: 0,
