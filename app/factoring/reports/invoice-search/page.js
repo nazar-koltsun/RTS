@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import styles from './page.module.css';
-import Image from 'next/image';
 import SearchInput from '@/app/components/SearchInput';
 import Button from '@/app/components/Button';
 import SearchIcon from '@/app/components/icons/SearchIcon';
 import PrintIcon from '@/app/components/icons/PrintIcon';
 import DownloadIcon from '@/app/components/icons/DownloadIcon';
 import FilterIcon from '@/app/components/icons/FilterIcon';
+import ArrowLeftIcon from '@/app/components/icons/ArrowLeftIcon';
+import ArrowRightIcon from '@/app/components/icons/ArrowRightIcon';
 
 const InvoiceSearchPage = () => {
   const [invoiceNumber, setInvoiceNumber] = useState('');
@@ -134,13 +135,9 @@ const InvoiceSearchPage = () => {
           <span className={styles.rowsPerPageLabel}>Rows per page:</span>
           <div className={styles.rowsPerPageDropdown}>
             <span>{rowsPerPage}</span>
-            <Image
-              src="/caretdown.svg"
-              alt="Dropdown"
-              width={12}
-              height={12}
-              className={styles.dropdownArrow}
-            />
+            <svg className={styles.dropdownArrow} viewBox="0 0 24 24">
+              <path d="M7 10l5 5 5-5z" fill="#0000008a"></path>
+            </svg>
           </div>
         </div>
         <div className={styles.paginationRight}>
@@ -153,21 +150,7 @@ const InvoiceSearchPage = () => {
             onClick={() => setCurrentPage(currentPage - 1)}
             aria-label="Previous page"
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M10 12L6 8L10 4"
-                stroke={currentPage === 1 ? '#ccc' : '#65676e'}
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <ArrowLeftIcon />
           </button>
           <button
             className={styles.paginationButton}
@@ -175,21 +158,7 @@ const InvoiceSearchPage = () => {
             onClick={() => setCurrentPage(currentPage + 1)}
             aria-label="Next page"
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M6 4L10 8L6 12"
-                stroke={endRow >= totalRows ? '#ccc' : '#65676e'}
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <ArrowRightIcon />
           </button>
         </div>
       </div>
