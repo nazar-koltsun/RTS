@@ -11,6 +11,7 @@ import FilterIcon from '@/app/components/icons/FilterIcon';
 import ArrowLeftIcon from '@/app/components/icons/ArrowLeftIcon';
 import ArrowRightIcon from '@/app/components/icons/ArrowRightIcon';
 import { supabase } from '@/lib/supabase';
+import InvoiceDetails from './components/InvoiceDetails';
 
 const InvoiceSearchPage = () => {
   const [invoiceNumber, setInvoiceNumber] = useState('');
@@ -20,6 +21,7 @@ const InvoiceSearchPage = () => {
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
 
   // Format amount as currency
   const formatCurrency = (amount) => {
@@ -52,7 +54,7 @@ const InvoiceSearchPage = () => {
     setLoading(true);
     setError(null);
     setCurrentPage(1);
-  
+
     try {
       // Build query based on search criteria
       let query = supabase.from('invoices').select('*');
@@ -75,6 +77,7 @@ const InvoiceSearchPage = () => {
 
       // Map database fields to display fields
       const mappedData = (data || []).map((invoice) => ({
+        id: invoice.id,
         invoiceNumber: invoice.invoice_number || '',
         customerName: invoice.customer_name || '',
         invoiceDate: formatDate(invoice.invoice_date || invoice.created_at),
@@ -105,6 +108,27 @@ const InvoiceSearchPage = () => {
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
+
+  // Handle row click to show invoice details
+  const handleRowClick = (row) => {
+    setSelectedInvoice(row);
+  };
+
+  // Handle back from invoice details
+  const handleBackFromDetails = () => {
+    setSelectedInvoice(null);
+  };
+
+  // If an invoice is selected, show the details view
+  if (selectedInvoice) {
+    return (
+      <InvoiceDetails
+        invoiceId={selectedInvoice.id}
+        invoiceNumber={selectedInvoice.invoiceNumber}
+        onBack={handleBackFromDetails}
+      />
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -189,7 +213,11 @@ const InvoiceSearchPage = () => {
               </tr>
             ) : (
               paginatedData.map((row, index) => (
-                <tr key={index} className={styles.tableRow}>
+                <tr
+                  key={index}
+                  className={styles.tableRow}
+                  onClick={() => handleRowClick(row)}
+                >
                   <td className={styles.tableCell}>{row.invoiceNumber}</td>
                   <td className={styles.tableCell}>{row.customerName}</td>
                   <td className={styles.tableCell}>{row.invoiceDate}</td>
