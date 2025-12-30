@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import styles from './InvoiceDetails.module.css';
 import { supabase } from '@/lib/supabase';
+import { cn } from '@/lib/utils';
+import PDFIcon from '@/app/components/icons/PDFIcon';
 
 const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
   const [invoiceData, setInvoiceData] = useState(null);
@@ -232,13 +234,6 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
       {/* Header */}
       <div className={styles.header}>
         <div className={styles.headerLeft}>
-          <div className={styles.selectReportLabel}>Select Report</div>
-          <div className={styles.reportDropdown}>
-            <span>Invoice Search</span>
-            <svg className={styles.dropdownArrow} viewBox="0 0 24 24">
-              <path d="M7 10l5 5 5-5z" fill="#0000008a"></path>
-            </svg>
-          </div>
           <div className={styles.breadcrumb}>
             <a
               href="#"
@@ -250,7 +245,7 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
             >
               Invoice Search
             </a>{' '}
-            <span className={styles.breadcrumbSeparator}>›</span> Invoice #
+            <span className={styles.breadcrumbSeparator}>&gt;</span> Invoice #
             {invoiceNumber || invoiceData.invoice_number || ''}
           </div>
         </div>
@@ -263,28 +258,7 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
               opacity: hasDocuments ? 1 : 0.5,
             }}
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z"
-                stroke="#0091EA"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M14 2V8H20"
-                stroke="#0091EA"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <PDFIcon />
             <span>View documents</span>
           </div>
         </div>
@@ -292,124 +266,86 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
 
       {/* Main Content */}
       <div className={styles.content}>
-        {/* Left Column - Invoice Details Summary */}
-        <div className={styles.leftColumn}>
-          <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>Invoice Details Summary</h2>
-            <div className={styles.tableContainer}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th className={styles.tableHeaderCell}>Purchase Date</th>
-                    <th className={styles.tableHeaderCell}>Invoice #</th>
-                    <th className={styles.tableHeaderCell}>Load #</th>
-                    <th className={styles.tableHeaderCell}>Amount</th>
-                    <th className={styles.tableHeaderCell}>Fee</th>
-                    <th className={styles.tableHeaderCell}>Purchase File #</th>
-                    <th className={styles.tableHeaderCell}>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className={styles.tableCell}>
-                      {formatDate(
-                        invoiceData.invoice_date || invoiceData.created_at
-                      )}
-                    </td>
-                    <td className={styles.tableCell}>
-                      {invoiceData.invoice_number || '-'}
-                    </td>
-                    <td className={styles.tableCell}>
-                      {invoiceData.load_number || '-'}
-                    </td>
-                    <td className={styles.tableCell}>
-                      {formatCurrency(invoiceData.amount)}
-                    </td>
-                    <td className={styles.tableCell}>
-                      {formatCurrency(invoiceData.fee || 0)}
-                    </td>
-                    <td className={styles.tableCell}>
-                      {invoiceData.purchase_file_number ||
-                        invoiceData.batch_number ||
-                        '-'}
-                    </td>
-                    <td className={styles.tableCell}>
-                      {invoiceData.description || invoiceData.notes || '-'}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Payments Section */}
-          <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>Payments</h2>
-            <div className={styles.tableContainer}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th className={styles.tableHeaderCell}>Check #</th>
-                    <th className={styles.tableHeaderCell}>Payment Date</th>
-                    <th className={styles.tableHeaderCell}>Payment Type</th>
-                    <th className={styles.tableHeaderCell}>Status</th>
-                    <th className={styles.tableHeaderCell}>Reserve Earned</th>
-                    <th className={styles.tableHeaderCell}>Amount</th>
-                    <th className={styles.tableHeaderCell}>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td colSpan="7" className={styles.emptyState}>
-                      Payment information available after invoice is paid.
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Notes Section */}
-          <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>Notes</h2>
-            <div className={styles.tableContainer}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th className={styles.tableHeaderCell}>Date</th>
-                    <th className={styles.tableHeaderCell}>By</th>
-                    <th className={styles.tableHeaderCell}>Action</th>
-                    <th className={styles.tableHeaderCell}>Reasons</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {invoiceData.notes && invoiceData.notes.trim() !== '' ? (
+        <div className={styles.invoiceTop}>
+          <div className={styles.invoiceTopLeft}>
+            <div className={cn(styles.section, styles.invoiceDetailsSummary)}>
+              <h2 className={styles.sectionTitle}>Invoice Details Summary</h2>
+              <div className={styles.tableContainer}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th className={styles.tableHeaderCell}>Purchase Date</th>
+                      <th className={styles.tableHeaderCell}>Invoice #</th>
+                      <th className={styles.tableHeaderCell}>Load #</th>
+                      <th className={styles.tableHeaderCell}>Amount</th>
+                      <th className={styles.tableHeaderCell}>Fee</th>
+                      <th className={styles.tableHeaderCell}>Purchase File #</th>
+                      <th className={styles.tableHeaderCell}>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
                     <tr>
                       <td className={styles.tableCell}>
                         {formatDate(
-                          invoiceData.updated_at || invoiceData.created_at
+                          invoiceData.invoice_date || invoiceData.created_at
                         )}
                       </td>
-                      <td className={styles.tableCell}>admin</td>
-                      <td className={styles.tableCell}>Note Added</td>
-                      <td className={styles.tableCell}>{invoiceData.notes}</td>
-                    </tr>
-                  ) : (
-                    <tr>
-                      <td colSpan="4" className={styles.emptyState}>
-                        No notes provided.
+                      <td className={styles.tableCell}>
+                        {invoiceData.invoice_number || '-'}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {invoiceData.load_number || '-'}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {formatCurrency(invoiceData.amount)}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {formatCurrency(invoiceData.fee || 0)}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {invoiceData.purchase_file_number ||
+                          invoiceData.batch_number ||
+                          '-'}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {invoiceData.description || invoiceData.notes || '-'}
                       </td>
                     </tr>
-                  )}
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Right Column - Customer Details */}
-        <div className={styles.rightColumn}>
-          <div className={styles.section}>
+            {/* Payments Section */}
+            <div className={cn(styles.section, styles.invoicePayments)}>
+              <h2 className={styles.sectionTitle}>Payments</h2>
+              <div className={styles.tableContainer}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th className={styles.tableHeaderCell}>Check #</th>
+                      <th className={styles.tableHeaderCell}>Payment Date</th>
+                      <th className={styles.tableHeaderCell}>Payment Type</th>
+                      <th className={styles.tableHeaderCell}>Status</th>
+                      <th className={styles.tableHeaderCell}>Reserve Earned</th>
+                      <th className={styles.tableHeaderCell}>Amount</th>
+                      <th className={styles.tableHeaderCell}>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td colSpan="7" className={styles.emptyState}>
+                        Payment information available after invoice is paid.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+          </div>
+
+          <div className={cn(styles.section, styles.customerDetails)}>
             <h2 className={styles.sectionTitle}>Customer Details</h2>
             <div className={styles.customerCard}>
               <div className={styles.customerField}>
@@ -458,7 +394,47 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
               </div>
             </div>
           </div>
+
         </div>
+
+
+        {/* Notes Section */}
+        <div className={cn(styles.section, styles.invoiceDetailsNotes)}>
+          <h2 className={styles.sectionTitle}>Notes</h2>
+          <div className={styles.tableContainer}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th className={styles.tableHeaderCell}>Date</th>
+                  <th className={styles.tableHeaderCell}>By</th>
+                  <th className={styles.tableHeaderCell}>Action</th>
+                  <th className={styles.tableHeaderCell}>Reasons</th>
+                </tr>
+              </thead>
+              <tbody>
+                {invoiceData.notes && invoiceData.notes.trim() !== '' ? (
+                  <tr>
+                    <td className={styles.tableCell}>
+                      {formatDate(
+                        invoiceData.updated_at || invoiceData.created_at
+                      )}
+                    </td>
+                    <td className={styles.tableCell}>admin</td>
+                    <td className={styles.tableCell}>Note Added</td>
+                    <td className={styles.tableCell}>{invoiceData.notes}</td>
+                  </tr>
+                ) : (
+                  <tr>
+                    <td colSpan="4" className={styles.emptyState}>
+                      No notes provided.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
     </div>
   );

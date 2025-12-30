@@ -122,11 +122,25 @@ const InvoiceSearchPage = () => {
   // If an invoice is selected, show the details view
   if (selectedInvoice) {
     return (
-      <InvoiceDetails
-        invoiceId={selectedInvoice.id}
-        invoiceNumber={selectedInvoice.invoiceNumber}
-        onBack={handleBackFromDetails}
-      />
+      <div className={styles.container}>
+        {/* Report Selection */}
+        <div className={styles.reportSelection}>
+          <div className={styles.selectReportLabel}>Select Report</div>
+
+          <div className={styles.reportDropdown}>
+            <span>Invoice Search</span>
+            <svg className={styles.dropdownArrow} viewBox="0 0 24 24">
+              <path d="M7 10l5 5 5-5z" fill="#0000008a"></path>
+            </svg>
+          </div>
+        </div>
+
+        <InvoiceDetails
+          invoiceId={selectedInvoice.id}
+          invoiceNumber={selectedInvoice.invoiceNumber}
+          onBack={handleBackFromDetails}
+        />
+      </div>
     );
   }
 

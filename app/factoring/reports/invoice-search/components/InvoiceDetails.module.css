@@ -1,16 +1,16 @@
 .container {
-  padding: 15px 64px 80px;
   font-family: var(--font-family-proxima-nova);
-  color: var(--font-default-color);
-  font-size: 16px;
 }
 
 /* Header */
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 40px;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  padding: 14px 25px;
 }
 
 .headerLeft {
@@ -19,58 +19,26 @@
   gap: 10px;
 }
 
-.selectReportLabel {
-  padding: 10px 0 5px;
-  font-size: 11px;
-  color: #999999;
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  color: #333333;
   font-weight: 400;
 }
 
-.reportDropdown {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 200px;
-  transition: all 0.15s ease-in-out;
-  min-width: 315px;
-  background-color: #fff;
-  border-radius: 20px;
-  padding: 0px 15px;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.22);
-}
-
-.reportDropdown span {
-  color: #333333;
-  font-size: 14px;
-  padding: 10px 32px 4px 0;
-}
-
-.dropdownArrow {
-  width: 24px;
-  height: 24px;
-}
-
-.breadcrumb {
-  font-size: 14px;
-  color: #0000008a;
-  margin-top: 10px;
-}
-
 .breadcrumbLink {
-  color: #0091EA;
+  font-size: 14px;
+  color: #0091ea;
   text-decoration: none;
   cursor: pointer;
   transition: opacity 0.2s ease-in-out;
 }
 
-.breadcrumbLink:hover {
-  opacity: 0.8;
-  text-decoration: underline;
-}
-
 .breadcrumbSeparator {
-  margin: 0 8px;
-  color: #0000008a;
+  margin: 0 14px;
+  font-size: 14px;
+  color: #333333;
 }
 
 .headerRight {
@@ -81,45 +49,68 @@
 .viewDocuments {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  color: #0091EA;
-  font-size: 14px;
-  cursor: pointer;
-  transition: opacity 0.2s ease-in-out;
+  width: auto;
+  height: 40px;
+  border-radius: 4px;
+  border: none;
+  font-family: var(--font-family-proxima-nova);
+  padding: 0px 16px;
+  box-shadow: none;
+  background-color: #ffffff;
+  color: #0091ea;
+  font-size: 13.33px;
+  letter-spacing: 0.5px;
 }
 
 .viewDocuments:hover {
-  opacity: 0.8;
+  cursor: pointer;
+  background-color: #eaf7ff;
 }
 
 /* Content Layout */
 .content {
-  display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: 40px;
-  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
-/* Sections */
-.section {
-  margin-bottom: 40px;
+.invoiceTop {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.invoiceTopLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  flex: 1;
+}
+
+.customerDetails {
+  width: 350px;
+}
+
+.invoiceDetailsSummary,
+.invoicePayments,
+.invoiceDetailsNotes {
+  flex: 1;
 }
 
 .sectionTitle {
-  font-size: 18px;
-  font-weight: 600;
-  color: #000000de;
-  margin-bottom: 20px;
+  margin: 9px 0;
   font-family: var(--font-family-proxima-nova);
+  color: rgb(91, 91, 91);
+  font-weight: 600;
+  font-size: 15px;
 }
-
 /* Table Container */
 .tableContainer {
   background-color: #ffffff;
+
   overflow: hidden;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 5px 0px,
-    rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 3px 1px -2px;
-  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .table {
@@ -133,26 +124,34 @@
 }
 
 .table thead tr {
-  border-bottom: 1px solid #eeeeee;
+  border: 1px solid #cccccc;
+  background-color: #eeeeee;
+  height: 54px;
+}
+
+.table tbody tr {
+  border: 1px solid #cccccc;
+  background-color: #ffffff;
+  height: 51px;
 }
 
 .tableHeaderCell {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
-  color: #888888;
+  color: #666666;
   text-align: left;
   font-family: var(--font-family-proxima-nova);
   letter-spacing: 0.3px;
-  padding: 18px 10px;
+  padding: 12px 6px;
   border-bottom: 1px solid #e0e0e0;
 }
 
 .tableHeaderCell:first-child {
-  padding-left: 20px;
+  padding-left: 24px;
 }
 
 .tableHeaderCell:last-child {
-  padding-right: 20px;
+  padding-right: 24px;
 }
 
 .table tbody {
@@ -160,8 +159,8 @@
 }
 
 .tableCell {
-  font-size: 14px;
-  color: #000000de;
+  font-size: 12px;
+  color: #000000;
   font-family: var(--font-family-proxima-nova);
   word-break: break-word;
   letter-spacing: 0.3px;
@@ -170,18 +169,18 @@
 }
 
 .tableCell:first-child {
-  padding-left: 20px;
+  padding-left: 24px;
 }
 
 .tableCell:last-child {
-  padding-right: 20px;
+  padding-right: 24px;
 }
 
 .emptyState {
   text-align: center;
-  padding: 40px 20px;
-  color: #0000008a;
-  font-size: 14px;
+  padding: 18px 20px;
+  color: #666666;
+  font-size: 12px;
   border: none;
 }
 
@@ -252,7 +251,7 @@
 }
 
 .viewCreditLink a {
-  color: #0091EA;
+  color: #0091ea;
   font-size: 14px;
   text-decoration: none;
   font-family: var(--font-family-proxima-nova);
@@ -263,15 +262,14 @@
   opacity: 0.8;
 }
 
-
 /* Loader */
 .loader {
   display: inline-block;
   width: 40px;
   height: 40px;
   border: 4px solid rgba(197, 230, 251, 0.2);
-  border-top-color: #0091EA;
-  border-right-color: #0091EA;
+  border-top-color: #0091ea;
+  border-right-color: #0091ea;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -308,4 +306,3 @@
     max-width: 100%;
   }
 }
-

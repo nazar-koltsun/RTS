@@ -7,7 +7,7 @@
 
 /* Report Selection */
 .reportSelection {
-  margin-bottom: 60px;
+  margin-bottom: 20px;
 }
 
 .selectReportLabel {
@@ -52,6 +52,7 @@
   justify-content: space-between;
   background-color: #ecebeb;
   padding: 0 24px 0 14px;
+  margin-top: 60px;
   margin-bottom: 20px;
   gap: 20px;
   flex-wrap: wrap;
