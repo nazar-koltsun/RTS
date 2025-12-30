@@ -52,7 +52,7 @@ const InvoiceSearchPage = () => {
     setLoading(true);
     setError(null);
     setCurrentPage(1);
-
+  
     try {
       // Build query based on search criteria
       let query = supabase.from('invoices').select('*');
@@ -141,7 +141,7 @@ const InvoiceSearchPage = () => {
             onClick={handleView}
             disabled={!invoiceNumber || invoiceNumber.trim() === '' || loading}
           >
-            {loading ? 'Searching...' : 'View'}
+            View
           </Button>
         </div>
         <div className={styles.actionIcons}>
@@ -178,8 +178,8 @@ const InvoiceSearchPage = () => {
             {loading ? (
               <tr>
                 <td colSpan="8" className={styles.emptyState}>
-                  <div style={{ textAlign: 'center', padding: '20px' }}>
-                    Loading...
+                  <div className={styles.loaderContainer}>
+                    <div className={styles.loader}></div>
                   </div>
                 </td>
               </tr>
