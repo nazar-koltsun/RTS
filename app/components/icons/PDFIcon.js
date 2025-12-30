@@ -1,9 +1,4 @@
-const PDFIcon = ({
-  width = 21,
-  height = 21,
-  fill = '#0091EA',
-  className,
-}) => {
+const PDFIcon = ({ width = 21, height = 21, fill = '#0091EA', className }) => {
   return (
     <svg
       className={className}
@@ -86,4 +81,3 @@ const PDFIcon = ({
 };
 
 export default PDFIcon;
-

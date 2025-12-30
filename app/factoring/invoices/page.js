@@ -7,7 +7,7 @@ import Image from 'next/image';
 import FormInput from '@/app/components/FormInput';
 import FilesPreviewBlock from './components/FilesPreviewBlock';
 import PurchaseSection from './components/PurchaseSection';
-import { supabase, restoreSession } from '@/lib/supabase';
+import { supabase, restoreSession, ensureValidSession } from '@/lib/supabase';
 import { uploadPDF } from '@/lib/supabase-storage';
 
 const STORAGE_KEY = 'invoices_data';
@@ -367,17 +367,8 @@ const Invoices = () => {
       // Restore session if needed
       await restoreSession();
 
-      // Check if user is authenticated
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-
-      if (sessionError || !session) {
-        throw new Error(
-          'You must be logged in to submit invoices. Please log in and try again.'
-        );
-      }
+      // Ensure user has a valid session (refreshes if expired)
+      await ensureValidSession();
 
       // Process each invoice: upload documents and create database record
       const invoicePromises = invoices.map(async (invoice) => {
@@ -464,7 +455,12 @@ const Invoices = () => {
           '   - Allowed operation: INSERT\n' +
           "   - Policy: bucket_id = 'invoice-documents' AND auth.role() = 'authenticated'\n\n" +
           'See STORAGE_SETUP.md for detailed instructions.';
-      } else if (error.message?.includes('must be logged in')) {
+      } else if (
+        error.message?.includes('must be logged in') ||
+        error.message?.includes('No active session') ||
+        error.message?.includes('Session expired') ||
+        error.message?.includes('Session error')
+      ) {
         errorMessage = 'Please log in and try again.';
       }
 
