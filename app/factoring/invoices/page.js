@@ -1,13 +1,20 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import styles from './page.module.css';
 import Image from 'next/image';
 import FormInput from '@/app/components/FormInput';
 import FilesPreviewBlock from './components/FilesPreviewBlock';
 import PurchaseSection from './components/PurchaseSection';
-import { supabase, restoreSession, ensureValidSession } from '@/lib/supabase';
+import {
+  supabase,
+  restoreSession,
+  ensureValidSession,
+  isRefreshTokenError,
+  logoutUser,
+} from '@/lib/supabase';
 import { uploadPDF } from '@/lib/supabase-storage';
 
 const STORAGE_KEY = 'invoices_data';
@@ -120,6 +127,8 @@ const loadInvoicesFromStorage = () => {
 };
 
 const Invoices = () => {
+  const router = useRouter();
+
   // Initialize state from localStorage
   const [invoices, setInvoices] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -367,8 +376,13 @@ const Invoices = () => {
       // Restore session if needed
       await restoreSession();
 
-      // Ensure user has a valid session (refreshes if expired)
-      await ensureValidSession();
+      // Ensure user has a valid session (refreshes if expired, logs out if too old)
+      const session = await ensureValidSession((path) => router.push(path));
+
+      // If session is null, user was logged out and redirected
+      if (!session) {
+        return;
+      }
 
       // Process each invoice: upload documents and create database record
       const invoicePromises = invoices.map(async (invoice) => {
@@ -385,6 +399,12 @@ const Invoices = () => {
                   `Error uploading document ${doc.name}:`,
                   uploadError
                 );
+
+                // If it's a refresh token error, re-throw to trigger logout
+                if (isRefreshTokenError(uploadError)) {
+                  throw uploadError;
+                }
+
                 // Continue with other documents even if one fails
                 // You can choose to throw here if you want to fail the entire invoice
                 return null;
@@ -418,6 +438,10 @@ const Invoices = () => {
           .select();
 
         if (error) {
+          // Check if it's a refresh token error
+          if (isRefreshTokenError(error)) {
+            throw error; // Re-throw to be caught by outer catch block
+          }
           throw new Error(
             `Failed to save invoice ${invoice.invoiceNumber}: ${error.message}`
           );
@@ -439,6 +463,13 @@ const Invoices = () => {
       alert(`Successfully submitted ${results.length} invoice(s)!`);
     } catch (error) {
       console.error('Error submitting invoices:', error);
+
+      // Check if it's a refresh token error - if so, logout and redirect
+      if (isRefreshTokenError(error)) {
+        console.log('Refresh token error detected, logging out...');
+        await logoutUser((path) => router.push(path));
+        return;
+      }
 
       // Provide more helpful error message
       let errorMessage = error.message || 'Unknown error occurred';

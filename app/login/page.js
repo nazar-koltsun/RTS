@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { supabase } from '@/lib/supabase';
+import { supabase, storeLoginTimestamp } from '@/lib/supabase';
 import FormInput from '@/app/components/FormInput';
 import Button from '@/app/components/Button';
 
@@ -75,6 +75,9 @@ export default function Login() {
           JSON.stringify(authData.session)
         );
       }
+
+      // Store login timestamp for session age checking
+      storeLoginTimestamp();
 
       // Redirect to factoring page
       router.push('/factoring/home');
