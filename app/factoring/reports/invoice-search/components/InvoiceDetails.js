@@ -279,7 +279,9 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
                       <th className={styles.tableHeaderCell}>Load #</th>
                       <th className={styles.tableHeaderCell}>Amount</th>
                       <th className={styles.tableHeaderCell}>Fee</th>
-                      <th className={styles.tableHeaderCell}>Purchase File #</th>
+                      <th className={styles.tableHeaderCell}>
+                        Purchase File #
+                      </th>
                       <th className={styles.tableHeaderCell}>Description</th>
                     </tr>
                   </thead>
@@ -342,7 +344,6 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
                 </table>
               </div>
             </div>
-            
           </div>
 
           <div className={cn(styles.section, styles.customerDetails)}>
@@ -369,9 +370,7 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
               <div className={styles.customerField}>
                 <span className={styles.customerLabel}>Avg Days to Pay:</span>
                 <span className={styles.customerValue}>
-                  {invoiceData.avg_days_to_pay
-                    ? `${invoiceData.avg_days_to_pay} Days (Over The Last 60 Days)`
-                    : '-'}
+                  40 Days (Over The Last 60 Days)
                 </span>
               </div>
               <div className={styles.customerField}>
@@ -382,9 +381,9 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
                 </div>
               </div>
               <div className={styles.customerField}>
-                <span className={styles.customerLabel}>Last Changed:</span>
+                <span className={styles.customerLabel}></span>
                 <span className={styles.customerValue}>
-                  {formatDate(invoiceData.updated_at || invoiceData.created_at)}
+                  Last Changed: {formatDate(invoiceData.updated_at || invoiceData.created_at)}
                 </span>
               </div>
               <div className={styles.viewCreditLink}>
@@ -394,9 +393,7 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
               </div>
             </div>
           </div>
-
         </div>
-
 
         {/* Notes Section */}
         <div className={cn(styles.section, styles.invoiceDetailsNotes)}>
@@ -434,7 +431,6 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
             </table>
           </div>
         </div>
-
       </div>
     </div>
   );
