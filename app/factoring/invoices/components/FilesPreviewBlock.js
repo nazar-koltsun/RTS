@@ -11,10 +11,24 @@ const FilesPreviewBlock = ({
   notes,
   customerEmail,
   customerPhone,
+  paymentCheck,
+  paymentDate,
+  paymentType,
+  paymentStatus,
+  paymentReserveEarned,
+  paymentAmount,
+  paymentDescription,
   onDeleteDocument,
   onNotesChange,
   onCustomerEmailChange,
   onCustomerPhoneChange,
+  onPaymentCheckChange,
+  onPaymentDateChange,
+  onPaymentTypeChange,
+  onPaymentStatusChange,
+  onPaymentReserveEarnedChange,
+  onPaymentAmountChange,
+  onPaymentDescriptionChange,
   fileInputClick,
   inputClassName,
 }) => {
@@ -39,8 +53,22 @@ const FilesPreviewBlock = ({
         invoiceId={invoiceId}
         customerEmail={customerEmail}
         customerPhone={customerPhone}
+        paymentCheck={paymentCheck}
+        paymentDate={paymentDate}
+        paymentType={paymentType}
+        paymentStatus={paymentStatus}
+        paymentReserveEarned={paymentReserveEarned}
+        paymentAmount={paymentAmount}
+        paymentDescription={paymentDescription}
         onCustomerEmailChange={onCustomerEmailChange}
         onCustomerPhoneChange={onCustomerPhoneChange}
+        onPaymentCheckChange={onPaymentCheckChange}
+        onPaymentDateChange={onPaymentDateChange}
+        onPaymentTypeChange={onPaymentTypeChange}
+        onPaymentStatusChange={onPaymentStatusChange}
+        onPaymentReserveEarnedChange={onPaymentReserveEarnedChange}
+        onPaymentAmountChange={onPaymentAmountChange}
+        onPaymentDescriptionChange={onPaymentDescriptionChange}
         inputClassName={inputClassName}
       />
       <div className={styles.filesPreviewBlock}>

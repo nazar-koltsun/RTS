@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import FormInput from '@/app/components/FormInput';
 import styles from './CustomerExtraFields.module.css';
 
@@ -7,8 +8,22 @@ const CustomerExtraFields = ({
   invoiceId,
   customerEmail,
   customerPhone,
+  paymentCheck,
+  paymentDate,
+  paymentType,
+  paymentStatus,
+  paymentReserveEarned,
+  paymentAmount,
+  paymentDescription,
   onCustomerEmailChange,
   onCustomerPhoneChange,
+  onPaymentCheckChange,
+  onPaymentDateChange,
+  onPaymentTypeChange,
+  onPaymentStatusChange,
+  onPaymentReserveEarnedChange,
+  onPaymentAmountChange,
+  onPaymentDescriptionChange,
   inputClassName,
 }) => {
   const handlePhoneChange = (e) => {
@@ -18,6 +33,53 @@ const CustomerExtraFields = ({
     if (phoneRegex.test(value)) {
       onCustomerPhoneChange(value);
     }
+  };
+
+  const handleNumberChange = (value, onChange) => {
+    // Allow only numbers and decimal point
+    const numberRegex = /^\d*\.?\d*$/;
+    if (numberRegex.test(value) || value === '') {
+      onChange(value);
+    }
+  };
+
+  // Get today's date in MM/DD/YYYY format
+  const getTodayDate = () => {
+    const today = new Date();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const year = today.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
+
+  // Set default date if empty
+  useEffect(() => {
+    if (!paymentDate || paymentDate.trim() === '') {
+      onPaymentDateChange(getTodayDate());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount to set initial default
+
+  // Format date from YYYY-MM-DD to MM/DD/YYYY for display
+  const formatDateForInput = (dateString) => {
+    // If empty, use today's date
+    if (!dateString || dateString.trim() === '') {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    // If already in YYYY-MM-DD format, return as is (for date input)
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      return dateString;
+    }
+    // If in MM/DD/YYYY format, convert to YYYY-MM-DD
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
+      const [month, day, year] = dateString.split('/');
+      return `${year}-${month}-${day}`;
+    }
+    return dateString;
   };
 
   return (
@@ -42,6 +104,115 @@ const CustomerExtraFields = ({
           className={inputClassName}
           value={customerPhone || ''}
           onChange={handlePhoneChange}
+        />
+      </div>
+      <div className={styles.paymentFields}>
+        <FormInput
+          id={`payment-check-${invoiceId}`}
+          name="paymentCheck"
+          type="text"
+          label="Payment Check"
+          className={inputClassName}
+          value={paymentCheck || ''}
+          onChange={(e) => onPaymentCheckChange(e.target.value)}
+        />
+
+        <FormInput
+          id={`payment-date-${invoiceId}`}
+          name="paymentDate"
+          type="date"
+          label="Payment Date"
+          className={inputClassName}
+          value={formatDateForInput(paymentDate)}
+          onChange={(e) => {
+            const dateValue = e.target.value;
+            if (dateValue) {
+              // Convert YYYY-MM-DD to MM/DD/YYYY
+              const [year, month, day] = dateValue.split('-');
+              onPaymentDateChange(`${month}/${day}/${year}`);
+            } else {
+              // If cleared, set to today's date
+              const today = new Date();
+              const month = String(today.getMonth() + 1).padStart(2, '0');
+              const day = String(today.getDate()).padStart(2, '0');
+              const year = today.getFullYear();
+              onPaymentDateChange(`${month}/${day}/${year}`);
+            }
+          }}
+        />
+
+        <div className={`${inputClassName} ${styles.selectWrapper}`}>
+          <label
+            htmlFor={`payment-type-${invoiceId}`}
+            className={styles.selectLabel}
+          >
+            Payment Type
+          </label>
+          <select
+            id={`payment-type-${invoiceId}`}
+            name="paymentType"
+            className={styles.selectInput}
+            value={paymentType || 'Bank Transfer'}
+            onChange={(e) => onPaymentTypeChange(e.target.value)}
+          >
+            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="Credit Card">Credit Card</option>
+          </select>
+        </div>
+
+        <div className={`${inputClassName} ${styles.selectWrapper}`}>
+          <label
+            htmlFor={`payment-status-${invoiceId}`}
+            className={styles.selectLabel}
+          >
+            Payment Status
+          </label>
+          <select
+            id={`payment-status-${invoiceId}`}
+            name="paymentStatus"
+            className={styles.selectInput}
+            value={paymentStatus || 'paid'}
+            onChange={(e) => onPaymentStatusChange(e.target.value)}
+          >
+            <option value="paid">Paid</option>
+            <option value="pending">Pending</option>
+          </select>
+        </div>
+
+        <FormInput
+          id={`payment-reserve-earned-${invoiceId}`}
+          name="paymentReserveEarned"
+          type="text"
+          label="Reserve Earned"
+          className={inputClassName}
+          value={paymentReserveEarned || ''}
+          onChange={(e) =>
+            handleNumberChange(e.target.value, onPaymentReserveEarnedChange)
+          }
+          inputMode="decimal"
+        />
+
+        <FormInput
+          id={`payment-amount-${invoiceId}`}
+          name="paymentAmount"
+          type="text"
+          label="Payment Amount"
+          className={inputClassName}
+          value={paymentAmount || ''}
+          onChange={(e) =>
+            handleNumberChange(e.target.value, onPaymentAmountChange)
+          }
+          inputMode="decimal"
+        />
+
+        <FormInput
+          id={`payment-description-${invoiceId}`}
+          name="paymentDescription"
+          type="text"
+          label="Payment Description"
+          className={inputClassName}
+          value={paymentDescription || ''}
+          onChange={(e) => onPaymentDescriptionChange(e.target.value)}
         />
       </div>
     </div>

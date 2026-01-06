@@ -335,11 +335,47 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td colSpan="7" className={styles.emptyState}>
-                        Payment information available after invoice is paid.
-                      </td>
-                    </tr>
+                    {invoiceData.payment_check ||
+                    invoiceData.payment_date ||
+                    invoiceData.payment_type ||
+                    invoiceData.payment_status ||
+                    invoiceData.payment_reserve_earned !== null ||
+                    invoiceData.payment_amount !== null ? (
+                      <tr>
+                        <td className={styles.tableCell}>
+                          {invoiceData.payment_check || '-'}
+                        </td>
+                        <td className={styles.tableCell}>
+                          {formatDate(invoiceData.payment_date)}
+                        </td>
+                        <td className={styles.tableCell}>
+                          {invoiceData.payment_type || '-'}
+                        </td>
+                        <td className={styles.tableCell}>
+                          {invoiceData.payment_status
+                            ? invoiceData.payment_status
+                                .charAt(0)
+                                .toUpperCase() +
+                              invoiceData.payment_status.slice(1)
+                            : '-'}
+                        </td>
+                        <td className={styles.tableCell}>
+                          {formatCurrency(invoiceData.payment_reserve_earned)}
+                        </td>
+                        <td className={styles.tableCell}>
+                          {formatCurrency(invoiceData.payment_amount)}
+                        </td>
+                        <td className={styles.tableCell}>
+                          {invoiceData.payment_description || '-'}
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr>
+                        <td colSpan="7" className={styles.emptyState}>
+                          Payment information available after invoice is paid.
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -370,7 +406,7 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
               <div className={styles.customerField}>
                 <span className={styles.customerLabel}>Avg Days to Pay:</span>
                 <span className={styles.customerValue}>
-                  40 Days (Over The Last 60 Days)
+                  30 Days (Over The Last 60 Days)
                 </span>
               </div>
               <div className={styles.customerField}>
@@ -383,7 +419,8 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
               <div className={styles.customerField}>
                 <span className={styles.customerLabel}></span>
                 <span className={styles.customerValue}>
-                  Last Changed: {formatDate(invoiceData.updated_at || invoiceData.created_at)}
+                  Last Changed:{' '}
+                  {formatDate(invoiceData.updated_at || invoiceData.created_at)}
                 </span>
               </div>
               <div className={styles.viewCreditLink}>

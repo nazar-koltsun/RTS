@@ -115,11 +115,27 @@ const loadInvoicesFromStorage = () => {
           name: doc.name,
         };
       });
+      // Get today's date in MM/DD/YYYY format for default
+      const getTodayDate = () => {
+        const today = new Date();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const year = today.getFullYear();
+        return `${month}/${day}/${year}`;
+      };
+
       return {
         ...invoice,
         documents,
         customerPhone: invoice.customerPhone || '',
         customerEmail: invoice.customerEmail || '',
+        paymentCheck: invoice.paymentCheck || '',
+        paymentDate: invoice.paymentDate || getTodayDate(),
+        paymentType: invoice.paymentType || 'Bank Transfer',
+        paymentStatus: invoice.paymentStatus || 'paid',
+        paymentReserveEarned: invoice.paymentReserveEarned || '',
+        paymentAmount: invoice.paymentAmount || '',
+        paymentDescription: invoice.paymentDescription || '',
       };
     });
   } catch (error) {
@@ -156,6 +172,13 @@ const Invoices = () => {
   const isInitialLoad = useRef(true);
 
   const handleCreateInvoice = () => {
+    // Get today's date in MM/DD/YYYY format
+    const today = new Date();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const year = today.getFullYear();
+    const todayFormatted = `${month}/${day}/${year}`;
+
     const newInvoice = {
       id: Date.now(),
       invoiceNumber: '',
@@ -164,6 +187,13 @@ const Invoices = () => {
       amount: '',
       customerPhone: '',
       customerEmail: '',
+      paymentCheck: '',
+      paymentDate: todayFormatted,
+      paymentType: 'Bank Transfer',
+      paymentStatus: 'paid',
+      paymentReserveEarned: '',
+      paymentAmount: '',
+      paymentDescription: '',
       documents: [],
       notes: '',
     };
@@ -221,7 +251,13 @@ const Invoices = () => {
       invoice.poNumber?.trim() !== '' &&
       invoice.amount?.trim() !== '' &&
       invoice.customerEmail?.trim() !== '' &&
-      invoice.customerPhone?.trim() !== ''
+      invoice.customerPhone?.trim() !== '' &&
+      invoice.paymentCheck?.trim() !== '' &&
+      invoice.paymentDate?.trim() !== '' &&
+      invoice.paymentType?.trim() !== '' &&
+      invoice.paymentStatus?.trim() !== '' &&
+      invoice.paymentReserveEarned?.trim() !== '' &&
+      invoice.paymentAmount?.trim() !== ''
     );
   };
 
@@ -428,6 +464,60 @@ const Invoices = () => {
         const amountValue = parseAmount(invoice.amount || '0');
         const amount = parseFloat(amountValue) || 0;
 
+        // Parse payment amounts with validation
+        // Ensure values are valid numbers and within reasonable bounds
+        const parsePaymentNumber = (value, fieldName) => {
+          // Handle empty or null values
+          if (value === null || value === undefined || value === '') {
+            return null;
+          }
+          // Handle string values
+          if (typeof value === 'string' && value.trim() === '') {
+            return null;
+          }
+
+          const parsed = parseFloat(value);
+          if (isNaN(parsed) || !isFinite(parsed)) {
+            console.warn(`Invalid ${fieldName} value: ${value}, using null`);
+            return null;
+          }
+
+          // Limit to reasonable maximum (999,999,999.99) to prevent overflow
+          // Adjust this limit based on your database column definition
+          // Most databases use NUMERIC(12,2) or NUMERIC(10,2)
+          const maxValue = 999999999.99;
+          if (Math.abs(parsed) > maxValue) {
+            console.warn(
+              `${fieldName} value too large: ${parsed}, capping at ${maxValue}`
+            );
+            return parsed > 0 ? maxValue : -maxValue;
+          }
+
+          // Round to 2 decimal places to avoid precision issues
+          return Math.round(parsed * 100) / 100;
+        };
+
+        const paymentReserveEarned = parsePaymentNumber(
+          invoice.paymentReserveEarned,
+          'paymentReserveEarned'
+        );
+        const paymentAmount = parsePaymentNumber(
+          invoice.paymentAmount,
+          'paymentAmount'
+        );
+
+        // Convert payment date from MM/DD/YYYY to YYYY-MM-DD for database
+        let paymentDateFormatted = null;
+        if (invoice.paymentDate && invoice.paymentDate.trim() !== '') {
+          const dateMatch = invoice.paymentDate.match(
+            /^(\d{2})\/(\d{2})\/(\d{4})$/
+          );
+          if (dateMatch) {
+            const [, month, day, year] = dateMatch;
+            paymentDateFormatted = `${year}-${month}-${day}`;
+          }
+        }
+
         // Insert invoice into database
         const { data, error } = await supabase
           .from('invoices')
@@ -439,6 +529,13 @@ const Invoices = () => {
               customer_phone: invoice.customerPhone || null,
               po_number: invoice.poNumber,
               amount: amount,
+              payment_check: invoice.paymentCheck || null,
+              payment_date: paymentDateFormatted,
+              payment_type: invoice.paymentType || null,
+              payment_status: invoice.paymentStatus || null,
+              payment_reserve_earned: paymentReserveEarned,
+              payment_amount: paymentAmount,
+              payment_description: invoice.paymentDescription?.trim() || null,
               documents: validDocumentUrls, // Array of PDF URLs
               notes: invoice.notes || null,
             },
@@ -796,6 +893,13 @@ const Invoices = () => {
                     notes={invoice.notes}
                     customerEmail={invoice.customerEmail || ''}
                     customerPhone={invoice.customerPhone || ''}
+                    paymentCheck={invoice.paymentCheck || ''}
+                    paymentDate={invoice.paymentDate || ''}
+                    paymentType={invoice.paymentType || 'Bank Transfer'}
+                    paymentStatus={invoice.paymentStatus || 'paid'}
+                    paymentReserveEarned={invoice.paymentReserveEarned || ''}
+                    paymentAmount={invoice.paymentAmount || ''}
+                    paymentDescription={invoice.paymentDescription || ''}
                     onDeleteDocument={handleDeleteDocument}
                     onNotesChange={handleNotesChange}
                     onCustomerEmailChange={(value) =>
@@ -803,6 +907,35 @@ const Invoices = () => {
                     }
                     onCustomerPhoneChange={(value) =>
                       handleInvoiceChange(invoice.id, 'customerPhone', value)
+                    }
+                    onPaymentCheckChange={(value) =>
+                      handleInvoiceChange(invoice.id, 'paymentCheck', value)
+                    }
+                    onPaymentDateChange={(value) =>
+                      handleInvoiceChange(invoice.id, 'paymentDate', value)
+                    }
+                    onPaymentTypeChange={(value) =>
+                      handleInvoiceChange(invoice.id, 'paymentType', value)
+                    }
+                    onPaymentStatusChange={(value) =>
+                      handleInvoiceChange(invoice.id, 'paymentStatus', value)
+                    }
+                    onPaymentReserveEarnedChange={(value) =>
+                      handleInvoiceChange(
+                        invoice.id,
+                        'paymentReserveEarned',
+                        value
+                      )
+                    }
+                    onPaymentAmountChange={(value) =>
+                      handleInvoiceChange(invoice.id, 'paymentAmount', value)
+                    }
+                    onPaymentDescriptionChange={(value) =>
+                      handleInvoiceChange(
+                        invoice.id,
+                        'paymentDescription',
+                        value
+                      )
                     }
                     fileInputClick={() =>
                       previewFileInputRefs.current[invoice.id]?.click()
