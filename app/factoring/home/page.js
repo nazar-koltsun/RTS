@@ -131,10 +131,25 @@ export default function Factoring() {
   const accountsReceivable = 599777.19;
   const reserves = -150.0;
 
+  // Helper function to format date as MM/DD/YYYY
+  const formatDate = (date) => {
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
+
+  // Helper function to get date N days before today
+  const getDateDaysAgo = (days) => {
+    const date = new Date();
+    date.setDate(date.getDate() - days);
+    return date;
+  };
+
   const recentPurchases = [
-    { date: '12/22/2025', amount: 33684.75, invoices: 12 },
-    { date: '12/19/2025', amount: 29056.5, invoices: 9 },
-    { date: '12/18/2025', amount: 10773.67, invoices: 9 },
+    { date: formatDate(getDateDaysAgo(3)), amount: 33684.75, invoices: 12 },
+    { date: formatDate(getDateDaysAgo(7)), amount: 29056.5, invoices: 9 },
+    { date: formatDate(getDateDaysAgo(10)), amount: 10773.67, invoices: 9 },
   ];
 
   const accountRep = {
