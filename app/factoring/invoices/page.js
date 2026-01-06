@@ -118,6 +118,8 @@ const loadInvoicesFromStorage = () => {
       return {
         ...invoice,
         documents,
+        customerPhone: invoice.customerPhone || '',
+        customerEmail: invoice.customerEmail || '',
       };
     });
   } catch (error) {
@@ -160,6 +162,8 @@ const Invoices = () => {
       customerName: '',
       poNumber: '',
       amount: '',
+      customerPhone: '',
+      customerEmail: '',
       documents: [],
       notes: '',
     };
@@ -215,7 +219,9 @@ const Invoices = () => {
       invoice.invoiceNumber?.trim() !== '' &&
       invoice.customerName?.trim() !== '' &&
       invoice.poNumber?.trim() !== '' &&
-      invoice.amount?.trim() !== ''
+      invoice.amount?.trim() !== '' &&
+      invoice.customerEmail?.trim() !== '' &&
+      invoice.customerPhone?.trim() !== ''
     );
   };
 
@@ -429,6 +435,8 @@ const Invoices = () => {
             {
               invoice_number: invoice.invoiceNumber,
               customer_name: invoice.customerName,
+              customer_email: invoice.customerEmail || null,
+              customer_phone: invoice.customerPhone || null,
               po_number: invoice.poNumber,
               amount: amount,
               documents: validDocumentUrls, // Array of PDF URLs
@@ -786,11 +794,20 @@ const Invoices = () => {
                     invoiceId={invoice.id}
                     documents={invoice.documents}
                     notes={invoice.notes}
+                    customerEmail={invoice.customerEmail || ''}
+                    customerPhone={invoice.customerPhone || ''}
                     onDeleteDocument={handleDeleteDocument}
                     onNotesChange={handleNotesChange}
+                    onCustomerEmailChange={(value) =>
+                      handleInvoiceChange(invoice.id, 'customerEmail', value)
+                    }
+                    onCustomerPhoneChange={(value) =>
+                      handleInvoiceChange(invoice.id, 'customerPhone', value)
+                    }
                     fileInputClick={() =>
                       previewFileInputRefs.current[invoice.id]?.click()
                     }
+                    inputClassName={styles.inputWrapper}
                   />
                 </>
               )}

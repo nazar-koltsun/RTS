@@ -1,0 +1,13 @@
+
+.filesPreviewForm {
+  grid-column: 2 / -1;
+  padding: 4px 0;
+}
+
+.filesPreviewContact {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) 100px;
+  align-items: center;
+  gap: 10px 20px;
+}
+
