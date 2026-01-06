@@ -47,7 +47,11 @@ const InvoiceSearchPage = () => {
   };
 
   const handleView = async () => {
-    if (!invoiceNumber || invoiceNumber.trim() === '') {
+    // At least one field must be provided
+    const hasInvoiceNumber = invoiceNumber && invoiceNumber.trim() !== '';
+    const hasReferenceNumber = referenceNumber && referenceNumber.trim() !== '';
+
+    if (!hasInvoiceNumber && !hasReferenceNumber) {
       return;
     }
 
@@ -59,11 +63,13 @@ const InvoiceSearchPage = () => {
       // Build query based on search criteria
       let query = supabase.from('invoices').select('*');
 
-      // Search by invoice number (required)
-      query = query.ilike('invoice_number', `%${invoiceNumber.trim()}%`);
+      // Search by invoice number if provided
+      if (hasInvoiceNumber) {
+        query = query.ilike('invoice_number', `%${invoiceNumber.trim()}%`);
+      }
 
-      // If reference number is provided, also filter by po_number
-      if (referenceNumber && referenceNumber.trim() !== '') {
+      // Search by po_number if reference number is provided
+      if (hasReferenceNumber) {
         query = query.ilike('po_number', `%${referenceNumber.trim()}%`);
       }
 
@@ -170,14 +176,17 @@ const InvoiceSearchPage = () => {
           <SearchInput
             placeholder="Reference Number"
             value={referenceNumber}
-            isDisabled={true}
             onChange={(e) => setReferenceNumber(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleView()}
           />
           <Button
             className={styles.viewButton}
             onClick={handleView}
-            disabled={!invoiceNumber || invoiceNumber.trim() === '' || loading}
+            disabled={
+              ((!invoiceNumber || invoiceNumber.trim() === '') &&
+                (!referenceNumber || referenceNumber.trim() === '')) ||
+              loading
+            }
           >
             View
           </Button>
