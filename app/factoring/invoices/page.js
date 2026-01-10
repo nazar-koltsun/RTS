@@ -131,8 +131,8 @@ const loadInvoicesFromStorage = () => {
         customerEmail: invoice.customerEmail || '',
         paymentCheck: invoice.paymentCheck || '',
         paymentDate: invoice.paymentDate || getTodayDate(),
-        paymentType: invoice.paymentType || 'Bank Transfer',
-        paymentStatus: invoice.paymentStatus || 'paid',
+        paymentType: invoice.paymentType || 'Pmt',
+        paymentStatus: invoice.paymentStatus || '-',
         paymentAmount: invoice.paymentAmount || '',
       };
     });
@@ -187,8 +187,8 @@ const Invoices = () => {
       customerEmail: '',
       paymentCheck: '',
       paymentDate: todayFormatted,
-      paymentType: 'Bank Transfer',
-      paymentStatus: 'paid',
+      paymentType: 'Pmt',
+      paymentStatus: '-',
       paymentAmount: '',
       documents: [],
       notes: '',
@@ -884,8 +884,8 @@ const Invoices = () => {
                     customerPhone={invoice.customerPhone || ''}
                     paymentCheck={invoice.paymentCheck || ''}
                     paymentDate={invoice.paymentDate || ''}
-                    paymentType={invoice.paymentType || 'Bank Transfer'}
-                    paymentStatus={invoice.paymentStatus || 'paid'}
+                    paymentType={invoice.paymentType || 'Pmt'}
+                    paymentStatus={invoice.paymentStatus || '-'}
                     paymentAmount={invoice.paymentAmount || ''}
                     onDeleteDocument={handleDeleteDocument}
                     onNotesChange={handleNotesChange}

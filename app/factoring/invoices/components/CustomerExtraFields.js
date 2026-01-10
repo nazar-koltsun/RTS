@@ -148,11 +148,10 @@ const CustomerExtraFields = ({
             id={`payment-type-${invoiceId}`}
             name="paymentType"
             className={styles.selectInput}
-            value={paymentType || 'Bank Transfer'}
+            value={paymentType || 'Pmt'}
             onChange={(e) => onPaymentTypeChange(e.target.value)}
           >
-            <option value="Bank Transfer">Bank Transfer</option>
-            <option value="Credit Card">Credit Card</option>
+            <option value="Pmt">Pmt</option>
           </select>
         </div>
 
@@ -167,11 +166,11 @@ const CustomerExtraFields = ({
             id={`payment-status-${invoiceId}`}
             name="paymentStatus"
             className={styles.selectInput}
-            value={paymentStatus || 'paid'}
+            value={paymentStatus || '-'}
             onChange={(e) => onPaymentStatusChange(e.target.value)}
           >
-            <option value="paid">Paid</option>
-            <option value="pending">Pending</option>
+            <option value="-">-</option>
+            <option value="Processed">Processed</option>
           </select>
         </div>
 
