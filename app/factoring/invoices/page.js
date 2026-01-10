@@ -133,9 +133,7 @@ const loadInvoicesFromStorage = () => {
         paymentDate: invoice.paymentDate || getTodayDate(),
         paymentType: invoice.paymentType || 'Bank Transfer',
         paymentStatus: invoice.paymentStatus || 'paid',
-        paymentReserveEarned: invoice.paymentReserveEarned || '',
         paymentAmount: invoice.paymentAmount || '',
-        paymentDescription: invoice.paymentDescription || '',
       };
     });
   } catch (error) {
@@ -191,9 +189,7 @@ const Invoices = () => {
       paymentDate: todayFormatted,
       paymentType: 'Bank Transfer',
       paymentStatus: 'paid',
-      paymentReserveEarned: '',
       paymentAmount: '',
-      paymentDescription: '',
       documents: [],
       notes: '',
     };
@@ -256,7 +252,6 @@ const Invoices = () => {
       invoice.paymentDate?.trim() !== '' &&
       invoice.paymentType?.trim() !== '' &&
       invoice.paymentStatus?.trim() !== '' &&
-      invoice.paymentReserveEarned?.trim() !== '' &&
       invoice.paymentAmount?.trim() !== ''
     );
   };
@@ -497,10 +492,6 @@ const Invoices = () => {
           return Math.round(parsed * 100) / 100;
         };
 
-        const paymentReserveEarned = parsePaymentNumber(
-          invoice.paymentReserveEarned,
-          'paymentReserveEarned'
-        );
         const paymentAmount = parsePaymentNumber(
           invoice.paymentAmount,
           'paymentAmount'
@@ -533,9 +524,7 @@ const Invoices = () => {
               payment_date: paymentDateFormatted,
               payment_type: invoice.paymentType || null,
               payment_status: invoice.paymentStatus || null,
-              payment_reserve_earned: paymentReserveEarned,
               payment_amount: paymentAmount,
-              payment_description: invoice.paymentDescription?.trim() || null,
               documents: validDocumentUrls, // Array of PDF URLs
               notes: invoice.notes || null,
             },
@@ -897,9 +886,7 @@ const Invoices = () => {
                     paymentDate={invoice.paymentDate || ''}
                     paymentType={invoice.paymentType || 'Bank Transfer'}
                     paymentStatus={invoice.paymentStatus || 'paid'}
-                    paymentReserveEarned={invoice.paymentReserveEarned || ''}
                     paymentAmount={invoice.paymentAmount || ''}
-                    paymentDescription={invoice.paymentDescription || ''}
                     onDeleteDocument={handleDeleteDocument}
                     onNotesChange={handleNotesChange}
                     onCustomerEmailChange={(value) =>
@@ -920,22 +907,8 @@ const Invoices = () => {
                     onPaymentStatusChange={(value) =>
                       handleInvoiceChange(invoice.id, 'paymentStatus', value)
                     }
-                    onPaymentReserveEarnedChange={(value) =>
-                      handleInvoiceChange(
-                        invoice.id,
-                        'paymentReserveEarned',
-                        value
-                      )
-                    }
                     onPaymentAmountChange={(value) =>
                       handleInvoiceChange(invoice.id, 'paymentAmount', value)
-                    }
-                    onPaymentDescriptionChange={(value) =>
-                      handleInvoiceChange(
-                        invoice.id,
-                        'paymentDescription',
-                        value
-                      )
                     }
                     fileInputClick={() =>
                       previewFileInputRefs.current[invoice.id]?.click()

@@ -12,18 +12,14 @@ const CustomerExtraFields = ({
   paymentDate,
   paymentType,
   paymentStatus,
-  paymentReserveEarned,
   paymentAmount,
-  paymentDescription,
   onCustomerEmailChange,
   onCustomerPhoneChange,
   onPaymentCheckChange,
   onPaymentDateChange,
   onPaymentTypeChange,
   onPaymentStatusChange,
-  onPaymentReserveEarnedChange,
   onPaymentAmountChange,
-  onPaymentDescriptionChange,
   inputClassName,
 }) => {
   const handlePhoneChange = (e) => {
@@ -180,19 +176,6 @@ const CustomerExtraFields = ({
         </div>
 
         <FormInput
-          id={`payment-reserve-earned-${invoiceId}`}
-          name="paymentReserveEarned"
-          type="text"
-          label="Reserve Earned"
-          className={inputClassName}
-          value={paymentReserveEarned || ''}
-          onChange={(e) =>
-            handleNumberChange(e.target.value, onPaymentReserveEarnedChange)
-          }
-          inputMode="decimal"
-        />
-
-        <FormInput
           id={`payment-amount-${invoiceId}`}
           name="paymentAmount"
           type="text"
@@ -203,16 +186,6 @@ const CustomerExtraFields = ({
             handleNumberChange(e.target.value, onPaymentAmountChange)
           }
           inputMode="decimal"
-        />
-
-        <FormInput
-          id={`payment-description-${invoiceId}`}
-          name="paymentDescription"
-          type="text"
-          label="Payment Description"
-          className={inputClassName}
-          value={paymentDescription || ''}
-          onChange={(e) => onPaymentDescriptionChange(e.target.value)}
         />
       </div>
     </div>
