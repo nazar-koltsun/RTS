@@ -131,9 +131,7 @@ const loadInvoicesFromStorage = () => {
         customerEmail: invoice.customerEmail || '',
         paymentCheck: invoice.paymentCheck || '',
         paymentDate: invoice.paymentDate || getTodayDate(),
-        paymentType: invoice.paymentType || 'Pmt',
         paymentStatus: invoice.paymentStatus || '-',
-        paymentAmount: invoice.paymentAmount || '',
       };
     });
   } catch (error) {
@@ -187,9 +185,7 @@ const Invoices = () => {
       customerEmail: '',
       paymentCheck: '',
       paymentDate: todayFormatted,
-      paymentType: 'Pmt',
       paymentStatus: '-',
-      paymentAmount: '',
       documents: [],
       notes: '',
     };
@@ -250,9 +246,7 @@ const Invoices = () => {
       invoice.customerPhone?.trim() !== '' &&
       invoice.paymentCheck?.trim() !== '' &&
       invoice.paymentDate?.trim() !== '' &&
-      invoice.paymentType?.trim() !== '' &&
-      invoice.paymentStatus?.trim() !== '' &&
-      invoice.paymentAmount?.trim() !== ''
+      invoice.paymentStatus?.trim() !== ''
     );
   };
 
@@ -459,44 +453,6 @@ const Invoices = () => {
         const amountValue = parseAmount(invoice.amount || '0');
         const amount = parseFloat(amountValue) || 0;
 
-        // Parse payment amounts with validation
-        // Ensure values are valid numbers and within reasonable bounds
-        const parsePaymentNumber = (value, fieldName) => {
-          // Handle empty or null values
-          if (value === null || value === undefined || value === '') {
-            return null;
-          }
-          // Handle string values
-          if (typeof value === 'string' && value.trim() === '') {
-            return null;
-          }
-
-          const parsed = parseFloat(value);
-          if (isNaN(parsed) || !isFinite(parsed)) {
-            console.warn(`Invalid ${fieldName} value: ${value}, using null`);
-            return null;
-          }
-
-          // Limit to reasonable maximum (999,999,999.99) to prevent overflow
-          // Adjust this limit based on your database column definition
-          // Most databases use NUMERIC(12,2) or NUMERIC(10,2)
-          const maxValue = 999999999.99;
-          if (Math.abs(parsed) > maxValue) {
-            console.warn(
-              `${fieldName} value too large: ${parsed}, capping at ${maxValue}`
-            );
-            return parsed > 0 ? maxValue : -maxValue;
-          }
-
-          // Round to 2 decimal places to avoid precision issues
-          return Math.round(parsed * 100) / 100;
-        };
-
-        const paymentAmount = parsePaymentNumber(
-          invoice.paymentAmount,
-          'paymentAmount'
-        );
-
         // Convert payment date from MM/DD/YYYY to YYYY-MM-DD for database
         let paymentDateFormatted = null;
         if (invoice.paymentDate && invoice.paymentDate.trim() !== '') {
@@ -522,9 +478,7 @@ const Invoices = () => {
               amount: amount,
               payment_check: invoice.paymentCheck || null,
               payment_date: paymentDateFormatted,
-              payment_type: invoice.paymentType || null,
               payment_status: invoice.paymentStatus || null,
-              payment_amount: paymentAmount,
               documents: validDocumentUrls, // Array of PDF URLs
               notes: invoice.notes || null,
             },
@@ -884,9 +838,7 @@ const Invoices = () => {
                     customerPhone={invoice.customerPhone || ''}
                     paymentCheck={invoice.paymentCheck || ''}
                     paymentDate={invoice.paymentDate || ''}
-                    paymentType={invoice.paymentType || 'Pmt'}
                     paymentStatus={invoice.paymentStatus || '-'}
-                    paymentAmount={invoice.paymentAmount || ''}
                     onDeleteDocument={handleDeleteDocument}
                     onNotesChange={handleNotesChange}
                     onCustomerEmailChange={(value) =>
@@ -901,14 +853,8 @@ const Invoices = () => {
                     onPaymentDateChange={(value) =>
                       handleInvoiceChange(invoice.id, 'paymentDate', value)
                     }
-                    onPaymentTypeChange={(value) =>
-                      handleInvoiceChange(invoice.id, 'paymentType', value)
-                    }
                     onPaymentStatusChange={(value) =>
                       handleInvoiceChange(invoice.id, 'paymentStatus', value)
-                    }
-                    onPaymentAmountChange={(value) =>
-                      handleInvoiceChange(invoice.id, 'paymentAmount', value)
                     }
                     fileInputClick={() =>
                       previewFileInputRefs.current[invoice.id]?.click()

@@ -337,9 +337,8 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
                   <tbody>
                     {invoiceData.payment_check ||
                     invoiceData.payment_date ||
-                    invoiceData.payment_type ||
                     invoiceData.payment_status ||
-                    invoiceData.payment_amount !== null ? (
+                    invoiceData.amount !== null ? (
                       <tr>
                         <td className={styles.tableCell}>
                           {invoiceData.payment_check || '-'}
@@ -347,9 +346,7 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
                         <td className={styles.tableCell}>
                           {formatDate(invoiceData.payment_date)}
                         </td>
-                        <td className={styles.tableCell}>
-                          {invoiceData.payment_type || '-'}
-                        </td>
+                        <td className={styles.tableCell}>-</td>
                         <td className={styles.tableCell}>
                           {invoiceData.payment_status
                             ? invoiceData.payment_status
@@ -360,7 +357,7 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
                         </td>
                         <td className={styles.tableCell}>-</td>
                         <td className={styles.tableCell}>
-                          {formatCurrency(invoiceData.payment_amount)}
+                          {formatCurrency(invoiceData.amount)}
                         </td>
                         <td className={styles.tableCell}>-</td>
                       </tr>

@@ -12,17 +12,15 @@
 
 .paymentFields {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
+  width: 100%;
+  max-width: 989px;
   margin-top: 14px;
   padding: 20px;
   margin-right: 20px;
   border: 2px dashed #0083ca;
   border-radius: 4px;
-
-  @media (max-width: 1280px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 .selectWrapper {

@@ -10,16 +10,12 @@ const CustomerExtraFields = ({
   customerPhone,
   paymentCheck,
   paymentDate,
-  paymentType,
   paymentStatus,
-  paymentAmount,
   onCustomerEmailChange,
   onCustomerPhoneChange,
   onPaymentCheckChange,
   onPaymentDateChange,
-  onPaymentTypeChange,
   onPaymentStatusChange,
-  onPaymentAmountChange,
   inputClassName,
 }) => {
   const handlePhoneChange = (e) => {
@@ -139,24 +135,6 @@ const CustomerExtraFields = ({
 
         <div className={`${inputClassName} ${styles.selectWrapper}`}>
           <label
-            htmlFor={`payment-type-${invoiceId}`}
-            className={styles.selectLabel}
-          >
-            Payment Type
-          </label>
-          <select
-            id={`payment-type-${invoiceId}`}
-            name="paymentType"
-            className={styles.selectInput}
-            value={paymentType || 'Pmt'}
-            onChange={(e) => onPaymentTypeChange(e.target.value)}
-          >
-            <option value="Pmt">Pmt</option>
-          </select>
-        </div>
-
-        <div className={`${inputClassName} ${styles.selectWrapper}`}>
-          <label
             htmlFor={`payment-status-${invoiceId}`}
             className={styles.selectLabel}
           >
@@ -173,19 +151,6 @@ const CustomerExtraFields = ({
             <option value="Processed">Processed</option>
           </select>
         </div>
-
-        <FormInput
-          id={`payment-amount-${invoiceId}`}
-          name="paymentAmount"
-          type="text"
-          label="Payment Amount"
-          className={inputClassName}
-          value={paymentAmount || ''}
-          onChange={(e) =>
-            handleNumberChange(e.target.value, onPaymentAmountChange)
-          }
-          inputMode="decimal"
-        />
       </div>
     </div>
   );
