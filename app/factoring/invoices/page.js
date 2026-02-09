@@ -132,6 +132,7 @@ const loadInvoicesFromStorage = () => {
         paymentCheck: invoice.paymentCheck || '',
         paymentDate: invoice.paymentDate || getTodayDate(),
         paymentStatus: invoice.paymentStatus || '-',
+        fee: invoice.fee || '',
       };
     });
   } catch (error) {
@@ -181,6 +182,7 @@ const Invoices = () => {
       customerName: '',
       poNumber: '',
       amount: '',
+      fee: '',
       customerPhone: '',
       customerEmail: '',
       paymentCheck: '',
@@ -453,6 +455,10 @@ const Invoices = () => {
         const amountValue = parseAmount(invoice.amount || '0');
         const amount = parseFloat(amountValue) || 0;
 
+        // Parse fee
+        const feeValue = invoice.fee ? String(invoice.fee).replace(/[$,]/g, '') : '';
+        const fee = feeValue !== '' ? (parseFloat(feeValue) || null) : null;
+
         // Convert payment date from MM/DD/YYYY to YYYY-MM-DD for database
         let paymentDateFormatted = null;
         if (invoice.paymentDate && invoice.paymentDate.trim() !== '') {
@@ -476,6 +482,7 @@ const Invoices = () => {
               customer_phone: invoice.customerPhone || null,
               po_number: invoice.poNumber,
               amount: amount,
+              fee: fee,
               payment_check: invoice.paymentCheck || null,
               payment_date: paymentDateFormatted,
               payment_status: invoice.paymentStatus || null,
@@ -622,6 +629,7 @@ const Invoices = () => {
           <div className={styles.tableHeaderCell}>CUSTOMER</div>
           <div className={styles.tableHeaderCell}>PO #</div>
           <div className={styles.tableHeaderCell}>AMOUNT</div>
+          <div className={styles.tableHeaderCell}>FEE</div>
           <div className={styles.tableHeaderCell}>
             DOCUMENTS
             <Image
@@ -749,6 +757,34 @@ const Invoices = () => {
                   // Only allow numbers and decimal point
                   if (/^\d*\.?\d*$/.test(rawValue)) {
                     handleInvoiceChange(invoice.id, 'amount', rawValue);
+                  }
+                }}
+                inputMode="decimal"
+              />
+
+              {/* Fee Input */}
+              <FormInput
+                id={`fee-${invoice.id}`}
+                name="fee"
+                type="text"
+                label="Fee"
+                className={styles.inputWrapper}
+                value={formatAmount(invoice.fee)}
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+
+                  // Allow empty string
+                  if (inputValue === '') {
+                    handleInvoiceChange(invoice.id, 'fee', '');
+                    return;
+                  }
+
+                  // Remove $ and commas for validation
+                  const rawValue = parseAmount(inputValue);
+
+                  // Only allow numbers and decimal point
+                  if (/^\d*\.?\d*$/.test(rawValue)) {
+                    handleInvoiceChange(invoice.id, 'fee', rawValue);
                   }
                 }}
                 inputMode="decimal"
