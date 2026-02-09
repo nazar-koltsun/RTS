@@ -49,16 +49,16 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
     return `$${numAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
   };
 
-  // Format date as MM/DD/YYYY
+  // Format date as DD/MM/YYYY (day/month/year)
   const formatDate = (dateString) => {
     if (!dateString) return '';
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return '';
-      const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
       const year = date.getFullYear();
-      return `${month}/${day}/${year}`;
+      return `${day}/${month}/${year}`;
     } catch {
       return '';
     }
@@ -94,7 +94,7 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
 
     // Filter out any null, undefined, or empty string values
     const filtered = documents.filter(
-      (doc) => doc && typeof doc === 'string' && doc.trim() !== ''
+      (doc) => doc && typeof doc === 'string' && doc.trim() !== '',
     );
 
     console.log('Filtered documents array:', filtered);
@@ -135,14 +135,14 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
       alert(
         `Some document URLs are invalid:\n${invalidUrls
           .map((u) => `Document ${u.index}: ${u.reason}`)
-          .join('\n')}\n\n` + `Please check the invoice data in the database.`
+          .join('\n')}\n\n` + `Please check the invoice data in the database.`,
       );
       return;
     }
 
     // Show helpful message about potential bucket errors
     console.log(
-      `Opening ${documents.length} document(s). If you see "Bucket not found" errors, ensure:`
+      `Opening ${documents.length} document(s). If you see "Bucket not found" errors, ensure:`,
     );
     console.log('1. The "invoice-documents" bucket exists in Supabase Storage');
     console.log('2. Storage policies are configured (see STORAGE_SETUP.md)');
@@ -156,12 +156,12 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
       try {
         console.log(
           `Opening document ${index + 1}/${documents.length}:`,
-          docUrl
+          docUrl,
         );
         const newWindow = window.open(
           docUrl,
           `_blank_${index}`, // Unique window name to allow multiple windows
-          'noopener,noreferrer'
+          'noopener,noreferrer',
         );
 
         // Check if popup was blocked
@@ -198,7 +198,7 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
       if (blocked > 0) {
         // Some opened, some blocked - log to console only
         console.warn(
-          `Only ${successful} of ${documents.length} documents opened. ${blocked} were blocked.`
+          `Only ${successful} of ${documents.length} documents opened. ${blocked} were blocked.`,
         );
       }
     }
@@ -289,7 +289,7 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
                     <tr>
                       <td className={styles.tableCell}>
                         {formatDate(
-                          invoiceData.invoice_date || invoiceData.created_at
+                          invoiceData.invoice_date || invoiceData.created_at,
                         )}
                       </td>
                       <td className={styles.tableCell}>
@@ -398,7 +398,7 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
               <div className={styles.customerField}>
                 <span className={styles.customerLabel}>Avg Days to Pay:</span>
                 <span className={styles.customerValue}>
-                  30 Days (Over The Last 60 Days)
+                  {invoiceData.avg_days_to_pay || '-'}
                 </span>
               </div>
               <div className={styles.customerField}>
@@ -410,7 +410,7 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
                         className={cn(
                           styles.creditIcon,
                           invoiceData.credit_rating === 'D' &&
-                            styles.creditIconYellow
+                            styles.creditIconYellow,
                         )}
                       >
                         {invoiceData.credit_rating}
@@ -431,7 +431,7 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
                 <span className={styles.customerLabel}></span>
                 <span className={styles.customerValue}>
                   Last Changed:{' '}
-                  {formatDate(invoiceData.updated_at || invoiceData.created_at)}
+                  {formatDate(invoiceData.credit_rating_last_changed) || '-'}
                 </span>
               </div>
               <div className={styles.viewCreditLink}>
@@ -461,7 +461,7 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
                   <tr>
                     <td className={styles.tableCell}>
                       {formatDate(
-                        invoiceData.updated_at || invoiceData.created_at
+                        invoiceData.updated_at || invoiceData.created_at,
                       )}
                     </td>
                     <td className={styles.tableCell}>admin</td>

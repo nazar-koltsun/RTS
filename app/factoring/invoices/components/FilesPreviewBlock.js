@@ -11,7 +11,9 @@ const FilesPreviewBlock = ({
   notes,
   customerEmail,
   customerPhone,
+  avgDaysToPay,
   creditRating,
+  creditRatingLastChanged,
   paymentCheck,
   paymentDate,
   paymentStatus,
@@ -22,7 +24,9 @@ const FilesPreviewBlock = ({
   onNotesChange,
   onCustomerEmailChange,
   onCustomerPhoneChange,
+  onAvgDaysToPayChange,
   onCreditRatingChange,
+  onCreditRatingLastChangedChange,
   onPaymentCheckChange,
   onPaymentDateChange,
   onPaymentStatusChange,
@@ -51,7 +55,9 @@ const FilesPreviewBlock = ({
         invoiceId={invoiceId}
         customerEmail={customerEmail}
         customerPhone={customerPhone}
+        avgDaysToPay={avgDaysToPay}
         creditRating={creditRating}
+        creditRatingLastChanged={creditRatingLastChanged}
         paymentCheck={paymentCheck}
         paymentDate={paymentDate}
         paymentStatus={paymentStatus}
@@ -60,7 +66,9 @@ const FilesPreviewBlock = ({
         parseAmount={parseAmount}
         onCustomerEmailChange={onCustomerEmailChange}
         onCustomerPhoneChange={onCustomerPhoneChange}
+        onAvgDaysToPayChange={onAvgDaysToPayChange}
         onCreditRatingChange={onCreditRatingChange}
+        onCreditRatingLastChangedChange={onCreditRatingLastChangedChange}
         onPaymentCheckChange={onPaymentCheckChange}
         onPaymentDateChange={onPaymentDateChange}
         onPaymentStatusChange={onPaymentStatusChange}

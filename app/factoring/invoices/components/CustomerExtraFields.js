@@ -7,7 +7,9 @@ const CustomerExtraFields = ({
   invoiceId,
   customerEmail,
   customerPhone,
+  avgDaysToPay,
   creditRating,
+  creditRatingLastChanged,
   paymentCheck,
   paymentDate,
   paymentStatus,
@@ -16,7 +18,9 @@ const CustomerExtraFields = ({
   parseAmount,
   onCustomerEmailChange,
   onCustomerPhoneChange,
+  onAvgDaysToPayChange,
   onCreditRatingChange,
+  onCreditRatingLastChangedChange,
   onPaymentCheckChange,
   onPaymentDateChange,
   onPaymentStatusChange,
@@ -41,14 +45,14 @@ const CustomerExtraFields = ({
   };
 
   // Convert stored date (MM/DD/YYYY or YYYY-MM-DD) to YYYY-MM-DD for date input
-  const getDateInputValue = () => {
-    if (!paymentDate || paymentDate.trim() === '' || paymentDate === '-') {
+  const getDateInputValue = (dateValue) => {
+    if (!dateValue || dateValue.trim() === '' || dateValue === '-') {
       return '';
     }
-    if (/^\d{4}-\d{2}-\d{2}$/.test(paymentDate)) {
-      return paymentDate;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+      return dateValue;
     }
-    const mmDdYyyyMatch = paymentDate.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    const mmDdYyyyMatch = dateValue.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
     if (mmDdYyyyMatch) {
       const [, month, day, year] = mmDdYyyyMatch;
       return `${year}-${month}-${day}`;
@@ -80,6 +84,16 @@ const CustomerExtraFields = ({
           onChange={handlePhoneChange}
         />
 
+        <FormInput
+          id={`avg-days-to-pay-${invoiceId}`}
+          name="avgDaysToPay"
+          type="text"
+          label="Avg Days to Pay"
+          className={inputClassName}
+          value={avgDaysToPay || ''}
+          onChange={(e) => onAvgDaysToPayChange(e.target.value)}
+        />
+
         <div className={`${inputClassName} ${styles.selectWrapper}`}>
           <label
             htmlFor={`credit-rating-${invoiceId}`}
@@ -101,6 +115,25 @@ const CustomerExtraFields = ({
             <option value="D">D - Poor</option>
           </select>
         </div>
+
+        <FormInput
+          id={`credit-rating-last-changed-${invoiceId}`}
+          name="creditRatingLastChanged"
+          type="date"
+          label="Credit Rating - last changed"
+          className={inputClassName}
+          value={getDateInputValue(creditRatingLastChanged)}
+          onChange={(e) => {
+            const dateValue = e.target.value;
+            if (!dateValue || dateValue.trim() === '') {
+              onCreditRatingLastChangedChange('-');
+            } else {
+              const [year, month, day] = dateValue.split('-');
+              onCreditRatingLastChangedChange(`${month}/${day}/${year}`);
+            }
+          }}
+          placeholder="dd.mm.yyyy"
+        />
       </div>
       <div className={styles.paymentFields}>
         <FormInput
@@ -119,7 +152,7 @@ const CustomerExtraFields = ({
           type="date"
           label="Payment Date"
           className={inputClassName}
-          value={getDateInputValue()}
+          value={getDateInputValue(paymentDate)}
           onChange={(e) => {
             const dateValue = e.target.value;
             if (!dateValue || dateValue.trim() === '') {
@@ -129,7 +162,7 @@ const CustomerExtraFields = ({
               onPaymentDateChange(`${month}/${day}/${year}`);
             }
           }}
-          placeholder="-"
+          placeholder="dd.mm.yyyy"
         />
 
         <div className={`${inputClassName} ${styles.selectWrapper}`}>

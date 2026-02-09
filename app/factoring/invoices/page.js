@@ -74,13 +74,13 @@ const saveInvoicesToStorage = async (invoices) => {
               id: doc.id,
               name: doc.name,
             };
-          })
+          }),
         );
         return {
           ...invoice,
           documents,
         };
-      })
+      }),
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(invoicesToSave));
   } catch (error) {
@@ -120,7 +120,12 @@ const loadInvoicesFromStorage = () => {
         documents,
         customerPhone: invoice.customerPhone || '',
         customerEmail: invoice.customerEmail || '',
+        avgDaysToPay: invoice.avgDaysToPay || '',
         creditRating: invoice.creditRating || '-',
+        creditRatingLastChanged:
+          invoice.creditRatingLastChanged?.trim() !== ''
+            ? invoice.creditRatingLastChanged
+            : '-',
         paymentCheck: invoice.paymentCheck || '',
         paymentDate:
           invoice.paymentDate?.trim() !== '' ? invoice.paymentDate : '-',
@@ -172,7 +177,9 @@ const Invoices = () => {
       fee: '',
       customerPhone: '',
       customerEmail: '',
+      avgDaysToPay: '',
       creditRating: '-',
+      creditRatingLastChanged: '-',
       paymentCheck: '',
       paymentDate: '-',
       paymentStatus: '-',
@@ -195,8 +202,8 @@ const Invoices = () => {
   const handleInvoiceChange = (id, field, value) => {
     setInvoices(
       invoices.map((invoice) =>
-        invoice.id === id ? { ...invoice, [field]: value } : invoice
-      )
+        invoice.id === id ? { ...invoice, [field]: value } : invoice,
+      ),
     );
   };
 
@@ -235,7 +242,10 @@ const Invoices = () => {
       invoice.amount?.trim() !== '' &&
       invoice.fee?.trim() !== '' &&
       invoice.customerEmail?.trim() !== '' &&
-      invoice.customerPhone?.trim() !== ''
+      invoice.customerPhone?.trim() !== '' &&
+      invoice.avgDaysToPay?.trim() !== '' &&
+      invoice.creditRatingLastChanged?.trim() !== '' &&
+      invoice.creditRatingLastChanged !== '-'
     );
   };
 
@@ -281,7 +291,7 @@ const Invoices = () => {
   const handleDocumentUpload = (invoiceId, files) => {
     // Filter only PDF files
     const pdfFiles = Array.from(files).filter(
-      (file) => file.type === 'application/pdf'
+      (file) => file.type === 'application/pdf',
     );
 
     if (pdfFiles.length === 0) {
@@ -307,8 +317,8 @@ const Invoices = () => {
               ...invoice,
               documents: [...invoice.documents, ...newDocuments],
             }
-          : invoice
-      )
+          : invoice,
+      ),
     );
   };
 
@@ -358,11 +368,11 @@ const Invoices = () => {
           ? {
               ...invoice,
               documents: invoice.documents.filter(
-                (doc) => doc.id !== documentId
+                (doc) => doc.id !== documentId,
               ),
             }
-          : invoice
-      )
+          : invoice,
+      ),
     );
   };
 
@@ -379,7 +389,7 @@ const Invoices = () => {
       (invoice) =>
         isAllFieldsFilled(invoice) &&
         invoice.documents &&
-        invoice.documents.length > 0
+        invoice.documents.length > 0,
     );
   };
 
@@ -417,7 +427,7 @@ const Invoices = () => {
               } catch (uploadError) {
                 console.error(
                   `Error uploading document ${doc.name}:`,
-                  uploadError
+                  uploadError,
                 );
 
                 // If it's a refresh token error, re-throw to trigger logout
@@ -432,7 +442,7 @@ const Invoices = () => {
             }
             // If document already has a URL (from previous submission), use it
             return doc.url || null;
-          })
+          }),
         );
 
         // Filter out any null values (failed uploads)
@@ -443,22 +453,27 @@ const Invoices = () => {
         const amount = parseFloat(amountValue) || 0;
 
         // Parse fee
-        const feeValue = invoice.fee ? String(invoice.fee).replace(/[$,]/g, '') : '';
-        const fee = feeValue !== '' ? (parseFloat(feeValue) || null) : null;
+        const feeValue = invoice.fee
+          ? String(invoice.fee).replace(/[$,]/g, '')
+          : '';
+        const fee = feeValue !== '' ? parseFloat(feeValue) || null : null;
 
         // Parse payment amount
         const paymentAmountValue = parseAmount(invoice.paymentAmount || '');
-        const paymentAmount = paymentAmountValue !== '' ? (parseFloat(paymentAmountValue) || null) : null;
+        const paymentAmount =
+          paymentAmountValue !== ''
+            ? parseFloat(paymentAmountValue) || null
+            : null;
 
         // Convert payment date from MM/DD/YYYY or YYYY-MM-DD to YYYY-MM-DD for database (ignore '-' and empty)
         let paymentDateFormatted = null;
         const paymentDateVal = invoice.paymentDate?.trim();
         if (paymentDateVal && paymentDateVal !== '-') {
           const mmDdYyyyMatch = paymentDateVal.match(
-            /^(\d{2})\/(\d{2})\/(\d{4})$/
+            /^(\d{2})\/(\d{2})\/(\d{4})$/,
           );
           const yyyyMmDdMatch = paymentDateVal.match(
-            /^(\d{4})-(\d{2})-(\d{2})$/
+            /^(\d{4})-(\d{2})-(\d{2})$/,
           );
           if (mmDdYyyyMatch) {
             const [, month, day, year] = mmDdYyyyMatch;
@@ -477,9 +492,25 @@ const Invoices = () => {
               customer_name: invoice.customerName,
               customer_email: invoice.customerEmail || null,
               customer_phone: invoice.customerPhone || null,
+              avg_days_to_pay: invoice.avgDaysToPay?.trim() || null,
               credit_rating:
                 invoice.creditRating?.trim() && invoice.creditRating !== '-'
                   ? invoice.creditRating
+                  : null,
+              credit_rating_last_changed:
+                invoice.creditRatingLastChanged?.trim() !== '' &&
+                invoice.creditRatingLastChanged !== '-'
+                  ? (() => {
+                      const val = invoice.creditRatingLastChanged?.trim();
+                      const mmDdYyyy = val?.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+                      const yyyyMmDd = val?.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                      if (mmDdYyyy) {
+                        const [, m, d, y] = mmDdYyyy;
+                        return `${y}-${m}-${d}`;
+                      }
+                      if (yyyyMmDd) return val;
+                      return null;
+                    })()
                   : null,
               po_number: invoice.poNumber,
               amount: amount,
@@ -503,7 +534,7 @@ const Invoices = () => {
             throw error; // Re-throw to be caught by outer catch block
           }
           throw new Error(
-            `Failed to save invoice ${invoice.invoiceNumber}: ${error.message}`
+            `Failed to save invoice ${invoice.invoiceNumber}: ${error.message}`,
           );
         }
 
@@ -618,7 +649,7 @@ const Invoices = () => {
         <div
           className={cn(
             styles.tableHeader,
-            isHeaderActive && styles.tableHeaderActive
+            isHeaderActive && styles.tableHeaderActive,
           )}
         >
           <div className={styles.tableHeaderCell}>
@@ -668,14 +699,14 @@ const Invoices = () => {
                   styles.invoiceRowLeftBorderWithDocuments,
                 isAllFieldsFilled(invoice) &&
                   (!invoice.documents || invoice.documents.length === 0) &&
-                  styles.invoiceRowLeftBorderFilled
+                  styles.invoiceRowLeftBorderFilled,
               )}
             ></div>
             <div
               className={cn(
                 styles.invoiceRowContent,
                 openPreviewId === invoice.id &&
-                  styles.invoiceRowContentWithPreview
+                  styles.invoiceRowContentWithPreview,
               )}
             >
               {/* Delete Button */}
@@ -704,7 +735,7 @@ const Invoices = () => {
                   handleInvoiceChange(
                     invoice.id,
                     'invoiceNumber',
-                    e.target.value
+                    e.target.value,
                   )
                 }
               />
@@ -721,7 +752,7 @@ const Invoices = () => {
                   handleInvoiceChange(
                     invoice.id,
                     'customerName',
-                    e.target.value
+                    e.target.value,
                   )
                 }
               />
@@ -838,7 +869,7 @@ const Invoices = () => {
                 <button
                   className={cn(
                     styles.showFilesBtn,
-                    openPreviewId === invoice.id && styles.showFilesBtnActive
+                    openPreviewId === invoice.id && styles.showFilesBtnActive,
                   )}
                   onClick={() => handleTogglePreview(invoice.id)}
                 >
@@ -877,7 +908,13 @@ const Invoices = () => {
                     notes={invoice.notes}
                     customerEmail={invoice.customerEmail || ''}
                     customerPhone={invoice.customerPhone || ''}
+                    avgDaysToPay={invoice.avgDaysToPay || ''}
                     creditRating={invoice.creditRating || '-'}
+                    creditRatingLastChanged={
+                      invoice.creditRatingLastChanged?.trim() !== ''
+                        ? invoice.creditRatingLastChanged
+                        : '-'
+                    }
                     paymentCheck={invoice.paymentCheck || ''}
                     paymentDate={
                       invoice.paymentDate?.trim() !== ''
@@ -896,8 +933,18 @@ const Invoices = () => {
                     onCustomerPhoneChange={(value) =>
                       handleInvoiceChange(invoice.id, 'customerPhone', value)
                     }
+                    onAvgDaysToPayChange={(value) =>
+                      handleInvoiceChange(invoice.id, 'avgDaysToPay', value)
+                    }
                     onCreditRatingChange={(value) =>
                       handleInvoiceChange(invoice.id, 'creditRating', value)
+                    }
+                    onCreditRatingLastChangedChange={(value) =>
+                      handleInvoiceChange(
+                        invoice.id,
+                        'creditRatingLastChanged',
+                        value
+                      )
                     }
                     onPaymentCheckChange={(value) =>
                       handleInvoiceChange(invoice.id, 'paymentCheck', value)

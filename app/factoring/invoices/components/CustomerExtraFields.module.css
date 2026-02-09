@@ -5,7 +5,7 @@
 
 .filesPreviewContact {
   display: grid;
-  grid-template-columns: repeat(4, 1fr) 100px;
+  grid-template-columns: repeat(5, 1fr) 100px;
   align-items: center;
   gap: 10px 20px;
 }
