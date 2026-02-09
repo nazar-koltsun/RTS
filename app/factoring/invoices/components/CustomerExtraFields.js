@@ -7,6 +7,7 @@ const CustomerExtraFields = ({
   invoiceId,
   customerEmail,
   customerPhone,
+  creditRating,
   paymentCheck,
   paymentDate,
   paymentStatus,
@@ -15,6 +16,7 @@ const CustomerExtraFields = ({
   parseAmount,
   onCustomerEmailChange,
   onCustomerPhoneChange,
+  onCreditRatingChange,
   onPaymentCheckChange,
   onPaymentDateChange,
   onPaymentStatusChange,
@@ -77,6 +79,28 @@ const CustomerExtraFields = ({
           value={customerPhone || ''}
           onChange={handlePhoneChange}
         />
+
+        <div className={`${inputClassName} ${styles.selectWrapper}`}>
+          <label
+            htmlFor={`credit-rating-${invoiceId}`}
+            className={styles.selectLabel}
+          >
+            Credit Rating
+          </label>
+          <select
+            id={`credit-rating-${invoiceId}`}
+            name="creditRating"
+            className={styles.selectInput}
+            value={creditRating || '-'}
+            onChange={(e) => onCreditRatingChange(e.target.value)}
+          >
+            <option value="-">-</option>
+            <option value="A">A - Excellent</option>
+            <option value="B">B - Good</option>
+            <option value="C">C - Average</option>
+            <option value="D">D - Poor</option>
+          </select>
+        </div>
       </div>
       <div className={styles.paymentFields}>
         <FormInput

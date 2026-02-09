@@ -404,8 +404,27 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
               <div className={styles.customerField}>
                 <span className={styles.customerLabel}>Credit Rating:</span>
                 <div className={styles.creditRating}>
-                  <div className={styles.creditIcon}>C</div>
-                  <span className={styles.creditText}>Average</span>
+                  {invoiceData.credit_rating ? (
+                    <>
+                      <div
+                        className={cn(
+                          styles.creditIcon,
+                          invoiceData.credit_rating === 'D' &&
+                            styles.creditIconYellow
+                        )}
+                      >
+                        {invoiceData.credit_rating}
+                      </div>
+                      <span className={styles.creditText}>
+                        {invoiceData.credit_rating === 'A' && 'Excellent'}
+                        {invoiceData.credit_rating === 'B' && 'Good'}
+                        {invoiceData.credit_rating === 'C' && 'Average'}
+                        {invoiceData.credit_rating === 'D' && 'Poor'}
+                      </span>
+                    </>
+                  ) : (
+                    <span className={styles.customerValue}>-</span>
+                  )}
                 </div>
               </div>
               <div className={styles.customerField}>

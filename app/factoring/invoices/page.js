@@ -120,6 +120,7 @@ const loadInvoicesFromStorage = () => {
         documents,
         customerPhone: invoice.customerPhone || '',
         customerEmail: invoice.customerEmail || '',
+        creditRating: invoice.creditRating || '-',
         paymentCheck: invoice.paymentCheck || '',
         paymentDate:
           invoice.paymentDate?.trim() !== '' ? invoice.paymentDate : '-',
@@ -171,6 +172,7 @@ const Invoices = () => {
       fee: '',
       customerPhone: '',
       customerEmail: '',
+      creditRating: '-',
       paymentCheck: '',
       paymentDate: '-',
       paymentStatus: '-',
@@ -475,6 +477,10 @@ const Invoices = () => {
               customer_name: invoice.customerName,
               customer_email: invoice.customerEmail || null,
               customer_phone: invoice.customerPhone || null,
+              credit_rating:
+                invoice.creditRating?.trim() && invoice.creditRating !== '-'
+                  ? invoice.creditRating
+                  : null,
               po_number: invoice.poNumber,
               amount: amount,
               fee: fee,
@@ -871,6 +877,7 @@ const Invoices = () => {
                     notes={invoice.notes}
                     customerEmail={invoice.customerEmail || ''}
                     customerPhone={invoice.customerPhone || ''}
+                    creditRating={invoice.creditRating || '-'}
                     paymentCheck={invoice.paymentCheck || ''}
                     paymentDate={
                       invoice.paymentDate?.trim() !== ''
@@ -888,6 +895,9 @@ const Invoices = () => {
                     }
                     onCustomerPhoneChange={(value) =>
                       handleInvoiceChange(invoice.id, 'customerPhone', value)
+                    }
+                    onCreditRatingChange={(value) =>
+                      handleInvoiceChange(invoice.id, 'creditRating', value)
                     }
                     onPaymentCheckChange={(value) =>
                       handleInvoiceChange(invoice.id, 'paymentCheck', value)
