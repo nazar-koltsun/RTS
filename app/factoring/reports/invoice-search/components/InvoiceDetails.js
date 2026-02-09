@@ -5,11 +5,13 @@ import styles from './InvoiceDetails.module.css';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 import PDFIcon from '@/app/components/icons/PDFIcon';
+import EditPaymentModal from './EditPaymentModal';
 
 const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
   const [invoiceData, setInvoiceData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchInvoiceDetails = async () => {
@@ -62,6 +64,13 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
     } catch {
       return '';
     }
+  };
+
+  const handleOpenPaymentModal = () => setIsPaymentModalOpen(true);
+  const handleClosePaymentModal = () => setIsPaymentModalOpen(false);
+
+  const handlePaymentSave = (updatedPayment) => {
+    setInvoiceData((prev) => ({ ...prev, ...updatedPayment }));
   };
 
   // Helper function to get documents array from invoice data
@@ -435,9 +444,13 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
                 </span>
               </div>
               <div className={styles.viewCreditLink}>
-                <a href="#" onClick={(e) => e.preventDefault()}>
+                <button
+                  type="button"
+                  className={styles.viewCreditButton}
+                  onClick={handleOpenPaymentModal}
+                >
                   View Credit Details
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -480,6 +493,14 @@ const InvoiceDetails = ({ invoiceId, invoiceNumber, onBack }) => {
           </div>
         </div>
       </div>
+
+      <EditPaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={handleClosePaymentModal}
+        invoiceId={invoiceId}
+        invoiceData={invoiceData}
+        onSave={handlePaymentSave}
+      />
     </div>
   );
 };

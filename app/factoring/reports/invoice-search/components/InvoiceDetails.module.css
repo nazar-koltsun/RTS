@@ -254,15 +254,18 @@
   margin-left: 106px;
 }
 
-.viewCreditLink a {
+.viewCreditButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
   color: #0091ea;
   font-size: 14px;
-  text-decoration: none;
   font-family: var(--font-family-proxima-nova);
   transition: opacity 0.2s ease-in-out;
 }
 
-.viewCreditLink a:hover {
+.viewCreditButton:hover {
   opacity: 0.8;
 }
 
