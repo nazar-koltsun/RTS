@@ -152,12 +152,12 @@ const EditPaymentModal = ({
             }
           />
           <div className={styles.selectWrapper}>
-            <label htmlFor="modal-payment-status" className={styles.label}>
+            <label htmlFor="modal-payment-status" className={styles.selectLabel}>
               Payment Status
             </label>
             <select
               id="modal-payment-status"
-              className={styles.select}
+              className={styles.selectInput}
               value={paymentForm.paymentStatus}
               onChange={(e) =>
                 setPaymentForm((p) => ({
