@@ -115,23 +115,16 @@ const loadInvoicesFromStorage = () => {
           name: doc.name,
         };
       });
-      // Get today's date in MM/DD/YYYY format for default
-      const getTodayDate = () => {
-        const today = new Date();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        const year = today.getFullYear();
-        return `${month}/${day}/${year}`;
-      };
-
       return {
         ...invoice,
         documents,
         customerPhone: invoice.customerPhone || '',
         customerEmail: invoice.customerEmail || '',
         paymentCheck: invoice.paymentCheck || '',
-        paymentDate: invoice.paymentDate || getTodayDate(),
+        paymentDate:
+          invoice.paymentDate?.trim() !== '' ? invoice.paymentDate : '-',
         paymentStatus: invoice.paymentStatus || '-',
+        paymentAmount: invoice.paymentAmount || '',
         fee: invoice.fee || '',
       };
     });
@@ -169,13 +162,6 @@ const Invoices = () => {
   const isInitialLoad = useRef(true);
 
   const handleCreateInvoice = () => {
-    // Get today's date in MM/DD/YYYY format
-    const today = new Date();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const year = today.getFullYear();
-    const todayFormatted = `${month}/${day}/${year}`;
-
     const newInvoice = {
       id: Date.now(),
       invoiceNumber: '',
@@ -186,8 +172,9 @@ const Invoices = () => {
       customerPhone: '',
       customerEmail: '',
       paymentCheck: '',
-      paymentDate: todayFormatted,
+      paymentDate: '-',
       paymentStatus: '-',
+      paymentAmount: '',
       documents: [],
       notes: '',
     };
@@ -237,18 +224,16 @@ const Invoices = () => {
     return formattedValue.replace(/[$,]/g, '');
   };
 
-  // Check if all text fields are filled
+  // Check if all required text fields are filled (Payment Check, Date, Status are optional)
   const isAllFieldsFilled = (invoice) => {
     return (
       invoice.invoiceNumber?.trim() !== '' &&
       invoice.customerName?.trim() !== '' &&
       invoice.poNumber?.trim() !== '' &&
       invoice.amount?.trim() !== '' &&
+      invoice.fee?.trim() !== '' &&
       invoice.customerEmail?.trim() !== '' &&
-      invoice.customerPhone?.trim() !== '' &&
-      invoice.paymentCheck?.trim() !== '' &&
-      invoice.paymentDate?.trim() !== '' &&
-      invoice.paymentStatus?.trim() !== ''
+      invoice.customerPhone?.trim() !== ''
     );
   };
 
@@ -459,15 +444,25 @@ const Invoices = () => {
         const feeValue = invoice.fee ? String(invoice.fee).replace(/[$,]/g, '') : '';
         const fee = feeValue !== '' ? (parseFloat(feeValue) || null) : null;
 
-        // Convert payment date from MM/DD/YYYY to YYYY-MM-DD for database
+        // Parse payment amount
+        const paymentAmountValue = parseAmount(invoice.paymentAmount || '');
+        const paymentAmount = paymentAmountValue !== '' ? (parseFloat(paymentAmountValue) || null) : null;
+
+        // Convert payment date from MM/DD/YYYY or YYYY-MM-DD to YYYY-MM-DD for database (ignore '-' and empty)
         let paymentDateFormatted = null;
-        if (invoice.paymentDate && invoice.paymentDate.trim() !== '') {
-          const dateMatch = invoice.paymentDate.match(
+        const paymentDateVal = invoice.paymentDate?.trim();
+        if (paymentDateVal && paymentDateVal !== '-') {
+          const mmDdYyyyMatch = paymentDateVal.match(
             /^(\d{2})\/(\d{2})\/(\d{4})$/
           );
-          if (dateMatch) {
-            const [, month, day, year] = dateMatch;
+          const yyyyMmDdMatch = paymentDateVal.match(
+            /^(\d{4})-(\d{2})-(\d{2})$/
+          );
+          if (mmDdYyyyMatch) {
+            const [, month, day, year] = mmDdYyyyMatch;
             paymentDateFormatted = `${year}-${month}-${day}`;
+          } else if (yyyyMmDdMatch) {
+            paymentDateFormatted = paymentDateVal;
           }
         }
 
@@ -483,9 +478,13 @@ const Invoices = () => {
               po_number: invoice.poNumber,
               amount: amount,
               fee: fee,
-              payment_check: invoice.paymentCheck || null,
+              payment_check: invoice.paymentCheck?.trim() || null,
               payment_date: paymentDateFormatted,
-              payment_status: invoice.paymentStatus || null,
+              payment_status:
+                invoice.paymentStatus?.trim() && invoice.paymentStatus !== '-'
+                  ? invoice.paymentStatus
+                  : null,
+              payment_amount: paymentAmount,
               documents: validDocumentUrls, // Array of PDF URLs
               notes: invoice.notes || null,
             },
@@ -873,8 +872,15 @@ const Invoices = () => {
                     customerEmail={invoice.customerEmail || ''}
                     customerPhone={invoice.customerPhone || ''}
                     paymentCheck={invoice.paymentCheck || ''}
-                    paymentDate={invoice.paymentDate || ''}
+                    paymentDate={
+                      invoice.paymentDate?.trim() !== ''
+                        ? invoice.paymentDate
+                        : '-'
+                    }
                     paymentStatus={invoice.paymentStatus || '-'}
+                    paymentAmount={invoice.paymentAmount || ''}
+                    formatAmount={formatAmount}
+                    parseAmount={parseAmount}
                     onDeleteDocument={handleDeleteDocument}
                     onNotesChange={handleNotesChange}
                     onCustomerEmailChange={(value) =>
@@ -891,6 +897,9 @@ const Invoices = () => {
                     }
                     onPaymentStatusChange={(value) =>
                       handleInvoiceChange(invoice.id, 'paymentStatus', value)
+                    }
+                    onPaymentAmountChange={(value) =>
+                      handleInvoiceChange(invoice.id, 'paymentAmount', value)
                     }
                     fileInputClick={() =>
                       previewFileInputRefs.current[invoice.id]?.click()

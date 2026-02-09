@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import FormInput from '@/app/components/FormInput';
 import styles from './CustomerExtraFields.module.css';
 
@@ -11,11 +10,15 @@ const CustomerExtraFields = ({
   paymentCheck,
   paymentDate,
   paymentStatus,
+  paymentAmount,
+  formatAmount,
+  parseAmount,
   onCustomerEmailChange,
   onCustomerPhoneChange,
   onPaymentCheckChange,
   onPaymentDateChange,
   onPaymentStatusChange,
+  onPaymentAmountChange,
   inputClassName,
 }) => {
   const handlePhoneChange = (e) => {
@@ -35,43 +38,20 @@ const CustomerExtraFields = ({
     }
   };
 
-  // Get today's date in MM/DD/YYYY format
-  const getTodayDate = () => {
-    const today = new Date();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const year = today.getFullYear();
-    return `${month}/${day}/${year}`;
-  };
-
-  // Set default date if empty
-  useEffect(() => {
-    if (!paymentDate || paymentDate.trim() === '') {
-      onPaymentDateChange(getTodayDate());
+  // Convert stored date (MM/DD/YYYY or YYYY-MM-DD) to YYYY-MM-DD for date input
+  const getDateInputValue = () => {
+    if (!paymentDate || paymentDate.trim() === '' || paymentDate === '-') {
+      return '';
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run on mount to set initial default
-
-  // Format date from YYYY-MM-DD to MM/DD/YYYY for display
-  const formatDateForInput = (dateString) => {
-    // If empty, use today's date
-    if (!dateString || dateString.trim() === '') {
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const day = String(today.getDate()).padStart(2, '0');
+    if (/^\d{4}-\d{2}-\d{2}$/.test(paymentDate)) {
+      return paymentDate;
+    }
+    const mmDdYyyyMatch = paymentDate.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (mmDdYyyyMatch) {
+      const [, month, day, year] = mmDdYyyyMatch;
       return `${year}-${month}-${day}`;
     }
-    // If already in YYYY-MM-DD format, return as is (for date input)
-    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-      return dateString;
-    }
-    // If in MM/DD/YYYY format, convert to YYYY-MM-DD
-    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
-      const [month, day, year] = dateString.split('/');
-      return `${year}-${month}-${day}`;
-    }
-    return dateString;
+    return '';
   };
 
   return (
@@ -115,22 +95,17 @@ const CustomerExtraFields = ({
           type="date"
           label="Payment Date"
           className={inputClassName}
-          value={formatDateForInput(paymentDate)}
+          value={getDateInputValue()}
           onChange={(e) => {
             const dateValue = e.target.value;
-            if (dateValue) {
-              // Convert YYYY-MM-DD to MM/DD/YYYY
-              const [year, month, day] = dateValue.split('-');
-              onPaymentDateChange(`${month}/${day}/${year}`);
+            if (!dateValue || dateValue.trim() === '') {
+              onPaymentDateChange('-');
             } else {
-              // If cleared, set to today's date
-              const today = new Date();
-              const month = String(today.getMonth() + 1).padStart(2, '0');
-              const day = String(today.getDate()).padStart(2, '0');
-              const year = today.getFullYear();
+              const [year, month, day] = dateValue.split('-');
               onPaymentDateChange(`${month}/${day}/${year}`);
             }
           }}
+          placeholder="-"
         />
 
         <div className={`${inputClassName} ${styles.selectWrapper}`}>
@@ -151,6 +126,27 @@ const CustomerExtraFields = ({
             <option value="Processed">Processed</option>
           </select>
         </div>
+
+        <FormInput
+          id={`payment-amount-${invoiceId}`}
+          name="paymentAmount"
+          type="text"
+          label="Payment Amount"
+          className={inputClassName}
+          value={formatAmount(paymentAmount)}
+          onChange={(e) => {
+            const inputValue = e.target.value;
+            if (inputValue === '') {
+              onPaymentAmountChange('');
+              return;
+            }
+            const rawValue = parseAmount(inputValue);
+            if (/^\d*\.?\d*$/.test(rawValue)) {
+              onPaymentAmountChange(rawValue);
+            }
+          }}
+          inputMode="decimal"
+        />
       </div>
     </div>
   );
