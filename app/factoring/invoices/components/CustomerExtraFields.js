@@ -13,6 +13,7 @@ const CustomerExtraFields = ({
   paymentCheck,
   paymentDate,
   paymentStatus,
+  paymentType,
   paymentAmount,
   formatAmount,
   parseAmount,
@@ -24,6 +25,7 @@ const CustomerExtraFields = ({
   onPaymentCheckChange,
   onPaymentDateChange,
   onPaymentStatusChange,
+  onPaymentTypeChange,
   onPaymentAmountChange,
   inputClassName,
 }) => {
@@ -181,6 +183,25 @@ const CustomerExtraFields = ({
           >
             <option value="-">-</option>
             <option value="Processed">Processed</option>
+          </select>
+        </div>
+
+        <div className={`${inputClassName} ${styles.selectWrapper}`}>
+          <label
+            htmlFor={`payment-type-${invoiceId}`}
+            className={styles.selectLabel}
+          >
+            Payment Type
+          </label>
+          <select
+            id={`payment-type-${invoiceId}`}
+            name="paymentType"
+            className={styles.selectInput}
+            value={paymentType || '-'}
+            onChange={(e) => onPaymentTypeChange(e.target.value)}
+          >
+            <option value="-">-</option>
+            <option value="Pmt">Pmt</option>
           </select>
         </div>
 

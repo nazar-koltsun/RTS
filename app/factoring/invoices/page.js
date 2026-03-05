@@ -130,6 +130,7 @@ const loadInvoicesFromStorage = () => {
         paymentDate:
           invoice.paymentDate?.trim() !== '' ? invoice.paymentDate : '-',
         paymentStatus: invoice.paymentStatus || '-',
+        paymentType: invoice.paymentType || '-',
         paymentAmount: invoice.paymentAmount || '',
         fee: invoice.fee || '',
       };
@@ -183,6 +184,7 @@ const Invoices = () => {
       paymentCheck: '',
       paymentDate: '-',
       paymentStatus: '-',
+      paymentType: '-',
       paymentAmount: '',
       documents: [],
       notes: '',
@@ -520,6 +522,10 @@ const Invoices = () => {
               payment_status:
                 invoice.paymentStatus?.trim() && invoice.paymentStatus !== '-'
                   ? invoice.paymentStatus
+                  : null,
+              payment_type:
+                invoice.paymentType?.trim() && invoice.paymentType !== '-'
+                  ? invoice.paymentType
                   : null,
               payment_amount: paymentAmount,
               documents: validDocumentUrls, // Array of PDF URLs
@@ -922,6 +928,7 @@ const Invoices = () => {
                         : '-'
                     }
                     paymentStatus={invoice.paymentStatus || '-'}
+                    paymentType={invoice.paymentType || '-'}
                     paymentAmount={invoice.paymentAmount || ''}
                     formatAmount={formatAmount}
                     parseAmount={parseAmount}
@@ -954,6 +961,9 @@ const Invoices = () => {
                     }
                     onPaymentStatusChange={(value) =>
                       handleInvoiceChange(invoice.id, 'paymentStatus', value)
+                    }
+                    onPaymentTypeChange={(value) =>
+                      handleInvoiceChange(invoice.id, 'paymentType', value)
                     }
                     onPaymentAmountChange={(value) =>
                       handleInvoiceChange(invoice.id, 'paymentAmount', value)

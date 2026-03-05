@@ -17,6 +17,7 @@ const FilesPreviewBlock = ({
   paymentCheck,
   paymentDate,
   paymentStatus,
+  paymentType,
   paymentAmount,
   formatAmount,
   parseAmount,
@@ -30,6 +31,7 @@ const FilesPreviewBlock = ({
   onPaymentCheckChange,
   onPaymentDateChange,
   onPaymentStatusChange,
+  onPaymentTypeChange,
   onPaymentAmountChange,
   fileInputClick,
   inputClassName,
@@ -61,6 +63,7 @@ const FilesPreviewBlock = ({
         paymentCheck={paymentCheck}
         paymentDate={paymentDate}
         paymentStatus={paymentStatus}
+        paymentType={paymentType}
         paymentAmount={paymentAmount}
         formatAmount={formatAmount}
         parseAmount={parseAmount}
@@ -72,6 +75,7 @@ const FilesPreviewBlock = ({
         onPaymentCheckChange={onPaymentCheckChange}
         onPaymentDateChange={onPaymentDateChange}
         onPaymentStatusChange={onPaymentStatusChange}
+        onPaymentTypeChange={onPaymentTypeChange}
         onPaymentAmountChange={onPaymentAmountChange}
         inputClassName={inputClassName}
       />
